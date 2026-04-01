@@ -1,0 +1,176 @@
+{
+  "Rice___Blast": {
+    "crop": "Rice",
+    "disease": "Blast",
+    "description": "Diamond-shaped lesions on leaves with gray centers.",
+    "cause": "Fungus Magnaporthe oryzae.",
+    "cure": "Spray Tricyclazole @ 0.6g/litre or Azoxystrobin.",
+    "prevention": "Use resistant variety, maintain field water level.",
+    "suggestion": "Spray in evening for maximum effect."
+  },
+
+  "Rice___Brown_Spot": {
+    "crop": "Rice",
+    "disease": "Brown Spot",
+    "description": "Circular brown spots with yellow halo.",
+    "cause": "Fungus Bipolaris oryzae.",
+    "cure": "Apply Mancozeb @ 2g/litre.",
+    "prevention": "Use nitrogen fertilizer carefully."
+  },
+
+  "Wheat___Rust": {
+    "crop": "Wheat",
+    "disease": "Rust",
+    "description": "Orange or brown powdery pustules on leaves.",
+    "cause": "Puccinia fungus.",
+    "cure": "Spray Propiconazole or Tebuconazole.",
+    "prevention": "Use resistant resistant wheat variety."
+  },
+
+  "Wheat___Smut": {
+    "crop": "Wheat",
+    "disease": "Smut",
+    "description": "Black powder-filled grains.",
+    "cause": "Fungal disease.",
+    "cure": "Use seed treatment like Vitavax or Bavistin."
+  },
+
+  "Maize___Leaf_Blight": {
+    "crop": "Maize",
+    "disease": "Leaf Blight",
+    "description": "Large tan lesions developing from leaf edges.",
+    "cause": "Helminthosporium turcicum.",
+    "cure": "Apply Mancozeb / Propiconazole.",
+    "prevention": "Avoid water stagnation."
+  },
+
+  "Maize___Stem_Rot": {
+    "crop": "Maize",
+    "disease": "Stem Rot",
+    "description": "Weak stems, lodging, hollow stem.",
+    "cause": "Fungal infection.",
+    "cure": "Improve drainage, use Trichoderma in soil."
+  },
+
+  "Tomato___Late_Blight": {
+    "crop": "Tomato",
+    "disease": "Late Blight",
+    "description": "Dark lesions on fruit, white fungus on underside of leaves.",
+    "cause": "Phytophthora infestans.",
+    "cure": "Spray Metalaxyl or Mancozeb.",
+    "prevention": "Avoid overhead irrigation."
+  },
+
+  "Tomato___Early_Blight": {
+    "crop": "Tomato",
+    "disease": "Early Blight",
+    "description": "Target-like circular rings on leaves.",
+    "cause": "Alternaria solani.",
+    "cure": "Use Chlorothalonil / Copper fungicide."
+  },
+
+  "Tomato___Leaf_Curl": {
+    "crop": "Tomato",
+    "disease": "Leaf Curl Virus",
+    "description": "Upward curling of leaves, stunted growth.",
+    "cause": "Whitefly transmitted virus.",
+    "cure": "Spray Imidacloprid on lower leaf surface.",
+    "prevention": "Use yellow sticky traps."
+  },
+
+  "Onion___Purple_Blotch": {
+    "crop": "Onion",
+    "disease": "Purple Blotch",
+    "description": "Purple lesions surrounded by yellow halo.",
+    "cause": "Alternaria porri.",
+    "cure": "Spray Mancozeb or Chlorothalonil."
+  },
+
+  "Onion___Downy_Mildew": {
+    "crop": "Onion",
+    "disease": "Downy Mildew",
+    "description": "Greenish-yellow spots that later turn purple.",
+    "cause": "Fungal infection.",
+    "cure": "Spray Metalaxyl @ recommended dose."
+  },
+
+  "Potato___Early_Blight": {
+    "crop": "Potato",
+    "disease": "Early Blight",
+    "description": "Dark concentric rings on lower leaves.",
+    "cause": "Alternaria fungus.",
+    "cure": "Apply Mancozeb or Copper Oxychloride."
+  },
+
+  "Potato___Late_Blight": {
+    "crop": "Potato",
+    "disease": "Late Blight",
+    "description": "Brown lesions on leaves and rapid plant death.",
+    "cause": "Phytophthora infestans.",
+    "cure": "Use Metalaxyl or Ridomil Gold."
+  },
+
+  "Brinjal___Fruit_Borer": {
+    "crop": "Brinjal",
+    "disease": "Fruit & Shoot Borer",
+    "description": "Bore holes in fruits, drying of shoots.",
+    "cause": "Leucinodes orbonalis.",
+    "cure": "Spray Spinosad or Emamectin Benzoate."
+  },
+
+  "Brinjal___Wilt": {
+    "crop": "Brinjal",
+    "disease": "Fusarium Wilt",
+    "description": "Sudden drooping and yellowing of leaves.",
+    "cause": "Soil fungus.",
+    "cure": "Use Trichoderma and crop rotation."
+  },
+
+  "Spinach___Leaf_Spot": {
+    "crop": "Spinach",
+    "disease": "Leaf Spot",
+    "description": "Brown or black circular spots.",
+    "cause": "Fungal spores.",
+    "cure": "Spray Copper fungicide."
+  },
+
+  "Cauliflower___Black_Rot": {
+    "crop": "Cauliflower",
+    "disease": "Black Rot",
+    "description": "V-shaped yellow to black lesions from leaf edge.",
+    "cause": "Bacterial infection.",
+    "cure": "Use copper-based bactericides."
+  },
+
+  "BitterGourd___Mildew": {
+    "crop": "Bitter Gourd",
+    "disease": "Powdery Mildew",
+    "description": "White powder on leaf upper surface.",
+    "cause": "Fungus.",
+    "cure": "Spray Sulfur / Potassium bicarbonate."
+  },
+
+  "Mustard___Alternaria_Blight": {
+    "crop": "Mustard",
+    "disease": "Alternaria Blight",
+    "description": "Circular brown patches on leaves & pods.",
+    "cause": "Alternaria brassicae.",
+    "cure": "Spray Mancozeb @ 2g/litre."
+  },
+
+  "Chana___Wilt": {
+    "crop": "Chana",
+    "disease": "Fusarium Wilt",
+    "description": "Sudden plant death, brown discoloration of stem base.",
+    "cause": "Soil fungus.",
+    "cure": "Trichoderma + seed treatment."
+  },
+
+  "Groundnut___Tikka": {
+    "crop": "Groundnut",
+    "disease": "Tikka Disease",
+    "description": "Brown circular spots on leaves.",
+    "cause": "Leaf spot fungus.",
+    "cure": "Apply Chlorothalonil or Mancozeb."
+  }
+}
