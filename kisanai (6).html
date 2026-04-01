@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KisanAI — आपका डिजिटल कृषि सलाहकार</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green:#4ade80;--green-dark:#16a34a;--green-deeper:#15803d;
+    --bg:#080f08;--bg2:#0f1a0f;--bg3:#162416;
+    --card:rgba(22,45,22,0.85);
+    --border:rgba(74,222,128,0.2);--border-bright:rgba(74,222,128,0.45);
+    --text:#e8f5e9;--text-dim:rgba(232,245,233,0.55);--text-muted:rgba(232,245,233,0.35);
+    --gold:#fbbf24;--red:#f87171;
+    --sky:#38bdf8;--sky-dim:rgba(56,189,248,0.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+  ::-webkit-scrollbar{width:5px;}
+  ::-webkit-scrollbar-thumb{background:var(--border-bright);border-radius:3px;}
+
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(1.4);}}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-22px) rotate(8deg);}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes slideIn{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:translateX(0);}}
+  @keyframes typing{0%,80%,100%{transform:scale(0);opacity:.3;}40%{transform:scale(1);opacity:1;}}
+  @keyframes priceFlash{0%,100%{background:transparent;}30%{background:rgba(74,222,128,.18);}}
+  @keyframes borderGlow{0%,100%{box-shadow:0 0 15px rgba(74,222,128,.1);}50%{box-shadow:0 0 30px rgba(74,222,128,.25);}}
+  @keyframes skyGlow{0%,100%{box-shadow:0 0 15px rgba(56,189,248,.1);}50%{box-shadow:0 0 35px rgba(56,189,248,.3);}}
+  @keyframes countUp{from{opacity:0;transform:scale(.7);}to{opacity:1;transform:scale(1);}}
+
+  /* ══ LANDING ══ */
+  #landing{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:40px 20px;}
+  .landing-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(22,101,52,.45) 0%,transparent 65%),radial-gradient(ellipse 50% 40% at 20% 80%,rgba(5,46,22,.4) 0%,transparent 60%),radial-gradient(ellipse 40% 50% at 80% 20%,rgba(5,46,22,.35) 0%,transparent 60%);}
+  .grain{position:absolute;inset:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");opacity:.7;}
+  .particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+  .particle{position:absolute;font-size:28px;opacity:.12;animation:float linear infinite;user-select:none;}
+  .landing-content{position:relative;z-index:2;max-width:780px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:22px;animation:fadeUp .9s ease both;}
+  .landing-badge{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);background:rgba(74,222,128,.08);border:1px solid var(--border-bright);padding:7px 18px;border-radius:30px;}
+  .landing-title{font-family:'Playfair Display',serif;font-size:clamp(72px,14vw,120px);font-weight:900;line-height:.9;letter-spacing:-4px;}
+  .landing-title .green{color:var(--green);}
+  .landing-subtitle{font-size:clamp(15px,3vw,20px);color:var(--text-dim);font-style:italic;letter-spacing:1px;}
+  .landing-desc{font-size:15px;color:var(--text-dim);line-height:1.8;max-width:540px;}
+  .features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%;margin-top:4px;}
+  .feature-card{background:rgba(74,222,128,.06);border:1px solid var(--border);border-radius:16px;padding:18px 14px;animation:fadeUp .7s ease both;transition:border-color .3s,transform .2s;}
+  .feature-card:hover{border-color:var(--border-bright);transform:translateY(-3px);}
+  .feature-card .icon{font-size:30px;margin-bottom:10px;}
+  .feature-card .ftitle{font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px;}
+  .feature-card .fdesc{font-size:11px;color:var(--text-muted);line-height:1.5;}
+  .cta-btn{background:linear-gradient(135deg,var(--green-dark),var(--green-deeper));border:none;color:#fff;padding:16px 48px;border-radius:14px;font-size:17px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 8px 32px rgba(22,163,74,.45);transition:transform .2s,box-shadow .2s;}
+  .cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(22,163,74,.6);}
+  .cta-sub{font-size:12px;color:var(--text-muted);}
+
+  /* ══ APP SHELL ══ */
+  #app{display:none;min-height:100vh;flex-direction:column;}
+  .app-bg{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 50% at 15% 15%,rgba(22,101,52,.35) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 85% 85%,rgba(22,101,52,.25) 0%,transparent 60%);}
+
+  header{position:sticky;top:0;z-index:200;background:rgba(8,15,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);}
+  .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:13px 20px;}
+  .logo{display:flex;align-items:center;gap:9px;}
+  .logo-icon{font-size:28px;}
+  .logo-text{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:var(--green);letter-spacing:-1px;}
+  .logo-badge{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:rgba(74,222,128,.12);color:var(--green);border:1px solid var(--border-bright);padding:2px 7px;border-radius:20px;}
+  .header-right{display:flex;align-items:center;gap:10px;}
+  .header-location{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(56,189,248,.8);background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2);padding:6px 12px;border-radius:20px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .lang-select{background:rgba(74,222,128,.08);border:1px solid var(--border);color:var(--green);border-radius:8px;padding:7px 10px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;}
+  .login-btn{background:linear-gradient(135deg,var(--green-dark),var(--green-deeper));border:none;color:#fff;padding:8px 18px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+  .user-chip{display:flex;align-items:center;gap:8px;background:rgba(74,222,128,.08);border:1px solid var(--border);border-radius:20px;padding:6px 12px;}
+  .user-avatar{width:28px;height:28px;border-radius:50%;background:var(--green-dark);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;}
+  .user-name{font-size:13px;color:var(--green);}
+
+  nav{position:sticky;top:57px;z-index:190;background:rgba(8,15,8,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+  nav::-webkit-scrollbar{display:none;}
+  .nav-inner{max-width:1100px;margin:0 auto;display:flex;padding:0 10px;}
+  .nav-tab{padding:13px 18px;background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;border-bottom:3px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;}
+  .nav-tab:hover{color:var(--green);}
+  .nav-tab.active{color:var(--green);border-bottom-color:var(--green);background:rgba(74,222,128,.04);}
+  .nav-tab.weather-tab.active{color:var(--sky);border-bottom-color:var(--sky);}
+
+  main{max-width:1100px;margin:0 auto;padding:28px 16px 60px;position:relative;z-index:1;flex:1;}
+  .panel{display:none;flex-direction:column;gap:26px;}
+  .panel.active{display:flex;animation:fadeUp .4s ease;}
+  .section-header{text-align:center;}
+  .section-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--green);margin-bottom:8px;}
+  .section-sub{font-size:14px;color:var(--text-dim);}
+
+  /* ══ SCAN ══ */
+  .input-type-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .type-btn{padding:10px 22px;border-radius:30px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;transition:all .2s;}
+  .type-btn:hover{border-color:var(--border-bright);color:var(--text);}
+  .type-btn.active{background:rgba(74,222,128,.12);border-color:var(--green);color:var(--green);}
+  .dropzone{border:2px dashed var(--border-bright);border-radius:18px;min-height:220px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-align:center;background:rgba(74,222,128,.03);transition:all .25s;animation:borderGlow 3s ease-in-out infinite;position:relative;overflow:hidden;}
+  .dropzone:hover,.dropzone.dragover{border-color:var(--green);background:rgba(74,222,128,.07);}
+  .dropzone-inner{display:flex;flex-direction:column;align-items:center;gap:12px;padding:40px;}
+  .drop-icon{font-size:52px;}.drop-text{font-size:16px;color:var(--green);font-weight:500;}.drop-hint{font-size:12px;color:var(--text-muted);}
+  .preview-img,.preview-video{max-width:100%;max-height:320px;border-radius:14px;object-fit:contain;}
+  .preview-info{display:flex;justify-content:space-between;align-items:center;padding:10px 16px 0;font-size:13px;}
+  .preview-info .fname{color:var(--text-dim);}.preview-info .change{color:var(--green);cursor:pointer;}
+  .text-area-wrap textarea{width:100%;background:rgba(74,222,128,.05);border:1px solid var(--border-bright);border-radius:14px;padding:18px;color:var(--text);font-size:15px;resize:vertical;font-family:'DM Sans',sans-serif;outline:none;min-height:140px;line-height:1.6;transition:border-color .2s;}
+  .text-area-wrap textarea:focus{border-color:var(--green);}
+  .text-area-wrap textarea::placeholder{color:var(--text-muted);}
+  .analyze-btn{background:linear-gradient(135deg,var(--green-dark),var(--green-deeper));border:none;color:#fff;padding:15px 42px;border-radius:13px;font-size:16px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;align-self:center;min-width:220px;box-shadow:0 6px 24px rgba(22,163,74,.4);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .analyze-btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(22,163,74,.5);}
+  .analyze-btn:disabled{opacity:.6;transform:none;cursor:not-allowed;}
+  .spinner{animation:spin .8s linear infinite;display:inline-block;}
+  .result-card{background:var(--card);border:1px solid var(--border-bright);border-radius:18px;padding:26px;backdrop-filter:blur(12px);animation:slideIn .4s ease;}
+  .result-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px;}
+  .result-disease-wrap{display:flex;align-items:center;gap:14px;}
+  .result-disease-icon{font-size:40px;}
+  .result-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;}
+  .result-disease-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--green);}
+  .audio-btn{background:rgba(74,222,128,.12);border:1px solid var(--border-bright);color:var(--green);padding:9px 18px;border-radius:9px;cursor:pointer;font-size:14px;font-family:'DM Sans',sans-serif;transition:all .2s;}
+  .audio-btn:hover{background:rgba(74,222,128,.2);}
+  .result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px;}
+  .result-item{background:rgba(74,222,128,.04);border:1px solid var(--border);border-radius:12px;padding:14px;transition:border-color .2s;}
+  .result-item:hover{border-color:var(--border-bright);}
+  .result-item-label{font-size:11px;color:var(--green);font-weight:700;margin-bottom:7px;letter-spacing:.5px;}
+  .result-item-text{font-size:14px;color:rgba(232,245,233,.82);line-height:1.65;}
+
+  /* ══ MARKET ══ */
+  .live-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;}
+  .live-dot{width:9px;height:9px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease-in-out infinite;}
+  .live-text{font-size:13px;color:var(--green);}
+  .price-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:14px;}
+  .price-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:17px;backdrop-filter:blur(8px);transition:border-color .3s,transform .2s;}
+  .price-card:hover{border-color:var(--border-bright);transform:translateY(-2px);}
+  .price-card.flash{animation:priceFlash .6s ease;}
+  .price-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .crop-emoji{font-size:30px;}.crop-info{flex:1;}
+  .crop-name{font-size:15px;font-weight:600;color:var(--text);}.crop-unit{font-size:11px;color:var(--text-muted);margin-top:1px;}
+  .change-badge{font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px;}
+  .change-up{background:rgba(74,222,128,.15);color:#4ade80;}.change-dn{background:rgba(248,113,113,.15);color:#f87171;}
+  .price-value{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--green);}
+  .market-note{font-size:13px;color:var(--text-muted);text-align:center;padding:14px 20px;background:rgba(74,222,128,.03);border:1px solid var(--border);border-radius:10px;}
+
+  /* ══ WEATHER PANEL ══ */
+  .weather-hero{background:linear-gradient(135deg,rgba(5,18,40,.97) 0%,rgba(3,12,28,.95) 100%);border:1px solid rgba(56,189,248,.3);border-radius:22px;padding:30px;position:relative;overflow:hidden;animation:skyGlow 4s ease-in-out infinite;backdrop-filter:blur(16px);}
+  .weather-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 25% 30%,rgba(56,189,248,.1) 0%,transparent 60%);pointer-events:none;}
+  .weather-loading{text-align:center;padding:60px 20px;color:var(--sky);}
+  .weather-spinner{font-size:48px;margin-bottom:16px;display:block;animation:spin 2s linear infinite;}
+  .weather-main-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;margin-bottom:26px;position:relative;z-index:1;}
+  .weather-left{display:flex;flex-direction:column;gap:6px;}
+  .weather-location-label{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(56,189,248,.75);letter-spacing:.5px;}
+  .weather-temp{font-family:'Playfair Display',serif;font-size:80px;font-weight:900;line-height:1;color:#fff;animation:countUp .6s ease;}
+  .weather-temp span{font-size:36px;color:rgba(56,189,248,.65);}
+  .weather-desc-text{font-size:20px;color:rgba(255,255,255,.7);font-style:italic;text-transform:capitalize;}
+  .weather-feels{font-size:13px;color:rgba(255,255,255,.35);margin-top:2px;}
+  .weather-icon-hero{font-size:90px;filter:drop-shadow(0 0 22px rgba(56,189,248,.45));}
+  .weather-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;position:relative;z-index:1;}
+  .w-stat{background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.18);border-radius:14px;padding:16px;text-align:center;transition:border-color .2s,transform .2s;}
+  .w-stat:hover{border-color:rgba(56,189,248,.45);transform:translateY(-2px);}
+  .w-stat-icon{font-size:26px;margin-bottom:8px;}
+  .w-stat-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--sky);margin-bottom:3px;}
+  .w-stat-label{font-size:11px;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:1px;}
+
+  .forecast-section-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--sky);margin-bottom:4px;}
+  .forecast-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
+  .forecast-day{background:rgba(56,189,248,.05);border:1px solid rgba(56,189,248,.13);border-radius:12px;padding:12px 8px;text-align:center;transition:all .2s;cursor:default;}
+  .forecast-day:hover{border-color:rgba(56,189,248,.38);background:rgba(56,189,248,.1);}
+  .forecast-day.today{border-color:rgba(56,189,248,.45);background:rgba(56,189,248,.1);}
+  .fc-day{font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+  .fc-icon{font-size:22px;margin-bottom:6px;}
+  .fc-temp{font-size:15px;font-weight:700;color:#fff;}
+  .fc-rain{font-size:11px;color:var(--sky);margin-top:3px;}
+
+  .weather-alert{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.28);border-radius:12px;padding:13px 17px;display:flex;align-items:flex-start;gap:11px;font-size:13px;color:rgba(251,191,36,.9);animation:fadeUp .5s ease;line-height:1.5;}
+  .weather-alert-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+  .weather-source{font-size:12px;color:rgba(56,189,248,.4);text-align:center;padding:12px;background:rgba(56,189,248,.03);border:1px solid rgba(56,189,248,.1);border-radius:10px;}
+  .weather-error-card{text-align:center;padding:50px 20px;background:rgba(56,189,248,.03);border:1px solid rgba(56,189,248,.12);border-radius:16px;}
+
+  /* ══ SUGGEST ══ */
+  .filter-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:26px;backdrop-filter:blur(10px);}
+  .filter-title{font-size:17px;font-weight:700;color:var(--green);margin-bottom:18px;}
+  .filter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:18px;}
+  .filter-group{display:flex;flex-direction:column;gap:7px;}
+  .filter-label{font-size:13px;color:var(--text-dim);font-weight:500;}
+  .filter-select{background:rgba(74,222,128,.07);border:1px solid var(--border-bright);border-radius:10px;padding:11px 13px;color:var(--text);font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+  .filter-select:focus{border-color:var(--green);}
+
+  /* weather mini bar inside suggest */
+  .wmini{background:linear-gradient(135deg,rgba(5,18,40,.9),rgba(3,12,28,.85));border:1px solid rgba(56,189,248,.22);border-radius:16px;padding:18px 20px;margin-bottom:4px;}
+  .wmini-title{font-size:13px;color:rgba(56,189,248,.8);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .wmini-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;}
+  .wmini-item{display:flex;align-items:center;gap:8px;}
+  .wmini-icon{font-size:22px;}
+  .wmini-val{font-size:15px;font-weight:700;color:var(--sky);}
+  .wmini-label{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px;}
+  .weather-tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);color:var(--sky);margin-top:5px;}
+  .suggest-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;}
+  .suggest-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:9px;transition:border-color .25s,transform .2s;animation:fadeUp .5s ease both;}
+  .suggest-card:hover{border-color:var(--border-bright);transform:translateY(-3px);}
+  .suggest-rank{font-size:10px;color:var(--green);font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+  .suggest-icon{font-size:34px;}.suggest-crop{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--green);}
+  .suggest-meta{font-size:13px;color:var(--text-dim);}
+  .suggest-profit{font-size:15px;font-weight:600;color:#86efac;}
+  .suggest-why{font-size:13px;color:rgba(232,245,233,.78);line-height:1.55;}
+  .suggest-risk{font-size:13px;font-weight:600;}
+  .risk-low{color:#4ade80;}.risk-med{color:#fbbf24;}.risk-high{color:#f87171;}
+
+  /* ══ SCHEMES ══ */
+  .scheme-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:10px;transition:border-color .25s,transform .2s;animation:fadeUp .5s ease both;}
+  .scheme-card:hover{border-color:var(--border-bright);transform:translateY(-3px);}
+  .scheme-header{display:flex;align-items:flex-start;gap:12px;}
+  .scheme-icon{font-size:36px;flex-shrink:0;}
+  .scheme-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--green);line-height:1.3;}
+  .scheme-ministry{font-size:11px;color:var(--text-muted);margin-top:2px;letter-spacing:.3px;}
+  .scheme-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:20px;width:fit-content;}
+  .badge-insurance{background:rgba(56,189,248,.12);color:var(--sky);border:1px solid rgba(56,189,248,.25);}
+  .badge-income{background:rgba(74,222,128,.12);color:var(--green);border:1px solid var(--border-bright);}
+  .badge-credit{background:rgba(251,191,36,.1);color:var(--gold);border:1px solid rgba(251,191,36,.25);}
+  .badge-input{background:rgba(167,243,208,.1);color:#6ee7b7;border:1px solid rgba(167,243,208,.2);}
+  .badge-tech{background:rgba(192,132,252,.1);color:#c084fc;border:1px solid rgba(192,132,252,.2);}
+  .badge-market{background:rgba(251,146,60,.1);color:#fb923c;border:1px solid rgba(251,146,60,.2);}
+  .scheme-benefit{font-size:13px;color:var(--text-dim);line-height:1.6;}
+  .scheme-highlight{font-size:15px;font-weight:700;color:#86efac;}
+  .scheme-eligibility{font-size:12px;color:var(--text-muted);background:rgba(74,222,128,.04);border:1px solid var(--border);border-radius:8px;padding:8px 11px;line-height:1.5;}
+  .scheme-apply-btn{background:linear-gradient(135deg,var(--green-dark),var(--green-deeper));border:none;color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;margin-top:4px;transition:opacity .2s;}
+  .scheme-apply-btn:hover{opacity:.88;}
+  .scheme-hidden{display:none!important;}
+
+  /* ══ CHAT LANG SELECTOR ══ */
+  .chat-lang-btn{padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;transition:all .2s;}
+  .chat-lang-btn:hover{border-color:var(--border-bright);color:var(--text);}
+  .chat-lang-btn.active{background:rgba(74,222,128,.14);border-color:var(--green);color:var(--green);font-weight:700;}
+
+  /* ══ CHAT ══ */
+  .chat-container{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;height:540px;backdrop-filter:blur(12px);}
+  .chat-messages{flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:16px;}
+  .chat-msg{display:flex;gap:10px;max-width:82%;animation:slideIn .3s ease;}
+  .chat-msg.ai{align-self:flex-start;}.chat-msg.user{align-self:flex-end;flex-direction:row-reverse;}
+  .chat-avatar{font-size:26px;flex-shrink:0;}
+  .chat-bubble{background:rgba(74,222,128,.09);border:1px solid rgba(74,222,128,.18);border-radius:14px;padding:11px 15px;font-size:14px;line-height:1.65;color:var(--text);}
+  .chat-msg.user .chat-bubble{background:rgba(22,163,74,.18);border-color:rgba(22,163,74,.35);}
+  .typing-dots{display:flex;gap:5px;align-items:center;padding:2px 0;}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:typing 1.2s infinite;}
+  .dot:nth-child(2){animation-delay:.2s;}.dot:nth-child(3){animation-delay:.4s;}
+  .chat-input-row{display:flex;gap:10px;padding:14px 16px;border-top:1px solid var(--border);background:rgba(8,15,8,.5);}
+  .chat-input{flex:1;background:rgba(74,222,128,.07);border:1px solid var(--border-bright);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+  .chat-input:focus{border-color:var(--green);}
+  .chat-input::placeholder{color:var(--text-muted);}
+  .chat-send{width:46px;background:var(--green-dark);border:none;color:#fff;border-radius:10px;font-size:20px;cursor:pointer;font-weight:700;}
+  .quick-questions{display:flex;gap:8px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid rgba(74,222,128,.08);}
+  .quick-q{font-size:12px;background:rgba(74,222,128,.07);border:1px solid var(--border);color:var(--text-dim);border-radius:20px;padding:5px 13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+  .quick-q:hover{border-color:var(--green);color:var(--green);}
+
+  /* ══ ASK KISANAI — FULL MULTILINGUAL UI ══ */
+
+  /* Header */
+  .ask-header-row{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .ask-clear-btn{padding:7px 16px;border-radius:20px;border:1px solid rgba(248,113,113,.3);background:rgba(248,113,113,.07);color:#f87171;cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .2s;white-space:nowrap;}
+  .ask-clear-btn:hover{background:rgba(248,113,113,.16);border-color:#f87171;}
+
+  /* Language tabs */
+  .lang-tab-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .lang-tab-label{font-size:12px;color:var(--text-muted);font-weight:500;white-space:nowrap;}
+  .lang-tabs{display:flex;gap:6px;flex-wrap:wrap;}
+  .lang-tab{padding:7px 16px;border-radius:22px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
+  .lang-tab:hover{border-color:var(--border-bright);color:var(--text);}
+  .lang-tab.active{background:rgba(74,222,128,.15);border-color:var(--green);color:var(--green);font-weight:700;box-shadow:0 0 10px rgba(74,222,128,.15);}
+
+  /* Voice control bar */
+  .voice-ctrl-bar{display:flex;gap:0;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;flex-wrap:wrap;}
+  .voice-ctrl-group{flex:1;min-width:200px;padding:14px 18px;display:flex;flex-direction:column;gap:10px;}
+  .voice-ctrl-divider{width:1px;background:var(--border);margin:10px 0;flex-shrink:0;}
+  .voice-ctrl-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);}
+  .voice-ctrl-btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+
+  /* Pills */
+  .vc-pill{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:20px;border:1px solid;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
+  .vc-pill-blue{border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.08);color:var(--sky);}
+  .vc-pill-blue:hover{background:rgba(56,189,248,.18);border-color:var(--sky);}
+  .vc-pill-gold{border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.08);color:var(--gold);}
+  .vc-pill-gold:hover{background:rgba(251,191,36,.18);border-color:var(--gold);}
+  .vc-pill-green{border-color:var(--border);background:rgba(74,222,128,.07);color:var(--text-dim);}
+  .vc-pill-green:hover{border-color:var(--green);color:var(--green);}
+  .vc-pill-green.active{border-color:var(--green);background:rgba(74,222,128,.18);color:var(--green);}
+
+  /* Mic button */
+  .vc-mic-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:1px solid rgba(74,222,128,.35);background:rgba(74,222,128,.1);color:var(--green);cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;transition:all .2s;}
+  .vc-mic-btn:hover{background:rgba(74,222,128,.2);}
+  .vc-mic-btn.listening{background:rgba(248,113,113,.18);border-color:#f87171;color:#f87171;animation:pulse 1s ease-in-out infinite;}
+
+  /* Status lines */
+  .vc-status{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;}
+  .vc-status-red{color:#f87171;}
+  .vc-status-gold{color:var(--gold);}
+  .vc-pulse-dot{width:7px;height:7px;border-radius:50%;background:#f87171;animation:pulse 1s ease-in-out infinite;flex-shrink:0;}
+  .vc-dot-gold{background:var(--gold);}
+  .vc-stop-btn{margin-left:6px;padding:3px 9px;border-radius:10px;border:1px solid rgba(248,113,113,.3);background:rgba(248,113,113,.1);color:#f87171;cursor:pointer;font-size:11px;font-family:'DM Sans',sans-serif;}
+
+  /* Chat shell */
+  .kisan-chat-shell{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;height:500px;backdrop-filter:blur(14px);}
+
+  /* Messages */
+  .kisan-chat-body{flex:1;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:18px;scroll-behavior:smooth;}
+  .kisan-chat-body::-webkit-scrollbar{width:4px;}
+  .kisan-chat-body::-webkit-scrollbar-thumb{background:var(--border-bright);border-radius:2px;}
+
+  .kisan-msg-row{display:flex;gap:10px;align-items:flex-start;animation:fadeUp .3s ease;}
+  .kisan-msg-row.user{flex-direction:row-reverse;}
+  .kisan-ai-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--green-dark),var(--green-deeper));display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;border:1px solid rgba(74,222,128,.3);}
+  .kisan-user-avatar{width:32px;height:32px;border-radius:50%;background:rgba(74,222,128,.12);border:1px solid var(--border-bright);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+  .kisan-bubble-col{display:flex;flex-direction:column;gap:3px;max-width:80%;}
+  .kisan-msg-row.user .kisan-bubble-col{align-items:flex-end;}
+  .kisan-sender{font-size:11px;font-weight:600;color:var(--text-muted);padding:0 3px;}
+  .kisan-bubble{border-radius:15px;padding:12px 15px;font-size:14px;line-height:1.7;color:var(--text);word-break:break-word;}
+  .kisan-bubble.ai{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.15);border-top-left-radius:3px;}
+  .kisan-bubble.ai strong{color:var(--green);}
+  .kisan-bubble.user{background:linear-gradient(135deg,rgba(22,163,74,.2),rgba(21,128,61,.16));border:1px solid rgba(22,163,74,.28);border-top-right-radius:3px;}
+  .kisan-msg-time{font-size:10px;color:var(--text-muted);padding:0 3px;}
+
+  /* Per-message TTS button */
+  .msg-tts-btn{display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:4px 10px;border-radius:10px;border:1px solid var(--border-bright);background:rgba(74,222,128,.07);color:var(--green);cursor:pointer;font-size:11px;font-family:'DM Sans',sans-serif;transition:all .2s;}
+  .msg-tts-btn:hover{background:rgba(74,222,128,.16);}
+  .msg-tts-btn.speaking{border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.1);color:var(--gold);}
+
+  /* Typing dots */
+  .kisan-typing{display:flex;gap:5px;align-items:center;padding:2px 0;}
+  .kisan-dot{width:7px;height:7px;border-radius:50%;background:var(--green);opacity:.4;animation:typing 1.2s infinite;}
+  .kisan-dot:nth-child(2){animation-delay:.2s;}
+  .kisan-dot:nth-child(3){animation-delay:.4s;}
+
+  /* Suggestions */
+  .kisan-suggestions{display:flex;gap:6px;flex-wrap:wrap;padding:9px 13px;border-top:1px solid rgba(74,222,128,.08);background:rgba(74,222,128,.02);}
+  .kisan-sug{font-size:12px;background:rgba(74,222,128,.07);border:1px solid var(--border);color:var(--text-dim);border-radius:18px;padding:5px 11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
+  .kisan-sug:hover{border-color:var(--green);color:var(--green);background:rgba(74,222,128,.12);}
+
+  /* Input bar */
+  .kisan-input-bar{display:flex;align-items:center;gap:8px;padding:11px 13px;border-top:1px solid var(--border);background:rgba(8,15,8,.55);}
+  .kisan-text-input{flex:1;background:rgba(74,222,128,.06);border:1px solid var(--border-bright);border-radius:11px;padding:10px 14px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;min-width:0;}
+  .kisan-text-input:focus{border-color:var(--green);}
+  .kisan-text-input::placeholder{color:var(--text-muted);}
+  .kisan-send-btn{width:38px;height:38px;border-radius:50%;background:var(--green-dark);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;box-shadow:0 3px 10px rgba(22,163,74,.4);}
+  .kisan-send-btn:hover{background:var(--green-deeper);transform:scale(1.08);}
+
+  /* ══ HISTORY ══ */
+  .history-list{display:flex;flex-direction:column;gap:14px;}
+  .history-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;animation:slideIn .3s ease;transition:border-color .2s;}
+  .history-card:hover{border-color:var(--border-bright);}
+  .history-top{display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;}
+  .history-thumb{width:62px;height:62px;border-radius:10px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);}
+  .history-thumb-ph{width:62px;height:62px;border-radius:10px;background:rgba(74,222,128,.08);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;border:1px solid var(--border);}
+  .history-disease{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--green);}
+  .history-query{font-size:13px;color:var(--text-dim);margin-top:3px;}
+  .history-time{font-size:11px;color:var(--text-muted);margin-top:5px;}
+  .history-cure{font-size:13px;color:rgba(232,245,233,.7);line-height:1.55;padding-top:10px;border-top:1px solid var(--border);}
+  .empty-state{text-align:center;padding:60px 20px;}
+  .empty-icon{font-size:50px;margin-bottom:16px;}
+  .empty-text{font-size:16px;color:var(--text-dim);}
+
+  /* ══ MODAL ══ */
+  .modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.open{display:flex;animation:fadeUp .3s ease;}
+  .modal{background:#0c170c;border:1px solid var(--border-bright);border-radius:22px;padding:34px;max-width:430px;width:100%;box-shadow:0 24px 70px rgba(0,0,0,.6);}
+  .modal-header{text-align:center;margin-bottom:26px;}
+  .modal-emoji{font-size:36px;display:block;margin-bottom:8px;}
+  .modal-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--green);margin-bottom:6px;}
+  .modal-sub{font-size:14px;color:var(--text-dim);}
+  .modal-form{display:flex;flex-direction:column;gap:13px;}
+  .form-input{background:rgba(74,222,128,.07);border:1px solid var(--border-bright);border-radius:11px;padding:13px 15px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;width:100%;}
+  .form-input:focus{border-color:var(--green);}
+  .form-input::placeholder{color:var(--text-muted);}
+  .submit-btn{background:linear-gradient(135deg,var(--green-dark),var(--green-deeper));border:none;color:#fff;padding:14px;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;margin-top:4px;}
+  .skip-btn{background:none;border:none;color:var(--text-muted);font-size:13px;cursor:pointer;text-align:center;font-family:'DM Sans',sans-serif;padding:4px;}
+  .notif{position:fixed;bottom:24px;right:24px;z-index:600;background:#0c170c;border:1px solid var(--green);border-radius:14px;padding:16px 20px;max-width:320px;box-shadow:0 8px 30px rgba(0,0,0,.5);animation:slideIn .4s ease;display:flex;gap:12px;align-items:flex-start;}
+  .notif-icon{font-size:24px;flex-shrink:0;}
+  .notif-title{font-size:14px;font-weight:700;color:var(--green);margin-bottom:4px;}
+  .notif-text{font-size:13px;color:var(--text-dim);line-height:1.5;}
+  .notif-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;}
+
+  @media(max-width:900px){.weather-stats{grid-template-columns:repeat(2,1fr);}.forecast-strip{grid-template-columns:repeat(4,1fr);}}
+  @media(max-width:768px){.features-grid{grid-template-columns:repeat(2,1fr);}.price-grid{grid-template-columns:repeat(2,1fr);}.suggest-grid{grid-template-columns:1fr;}.result-grid{grid-template-columns:1fr;}.header-inner{padding:10px 14px;}.logo-text{font-size:20px;}.header-location{display:none;}.weather-stats{grid-template-columns:repeat(2,1fr);}.forecast-strip{grid-template-columns:repeat(4,1fr);}}
+  @media(max-width:480px){.price-grid{grid-template-columns:repeat(2,1fr);}.nav-tab{padding:12px 12px;font-size:12px;}.modal{padding:24px 18px;}.chat-container{height:480px;}.weather-temp{font-size:60px;}.forecast-strip{grid-template-columns:repeat(3,1fr);}}
+  select option{background:#0f1a0f;}
+
+  /* ══ SELL CROPS ══ */
+  .listing-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;animation:slideIn .3s ease;transition:border-color .2s;}
+  .listing-card:hover{border-color:var(--border-bright);}
+  .listing-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;}
+  .listing-crop{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--green);}
+  .listing-price{font-size:20px;font-weight:700;color:#86efac;}
+  .listing-meta{font-size:13px;color:var(--text-dim);display:flex;gap:14px;flex-wrap:wrap;}
+  .listing-note{font-size:13px;color:rgba(232,245,233,.65);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+  .listing-badge{font-size:11px;font-weight:700;background:rgba(74,222,128,.12);border:1px solid var(--border-bright);color:var(--green);padding:3px 10px;border-radius:20px;}
+  .contact-btn{background:rgba(74,222,128,.12);border:1px solid var(--border-bright);color:var(--green);padding:8px 18px;border-radius:9px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:all .2s;margin-top:10px;}
+  .contact-btn:hover{background:rgba(74,222,128,.22);}
+
+  /* ══ FERTILISER ══ */
+  .fert-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;}
+  .fert-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:9px;animation:fadeUp .4s ease;transition:border-color .2s,transform .2s;}
+  .fert-card:hover{border-color:var(--border-bright);transform:translateY(-2px);}
+  .fert-rank{font-size:10px;color:var(--green);font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+  .fert-icon{font-size:32px;}
+  .fert-name{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--green);}
+  .fert-dose{font-size:13px;color:var(--text-dim);}
+  .fert-why{font-size:13px;color:rgba(232,245,233,.78);line-height:1.55;}
+  .fert-price-tag{font-size:15px;font-weight:600;color:#86efac;}
+  .fert-caution{font-size:12px;color:#fbbf24;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:8px;padding:6px 10px;margin-top:2px;}
+  .buy-btn{background:linear-gradient(135deg,var(--green-dark),var(--green-deeper));border:none;color:#fff;padding:10px 18px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:4px;transition:all .2s;}
+  .buy-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(22,163,74,.4);}
+</style>
+</head>
+<body>
+
+<!-- ══ LANDING ══ -->
+<section id="landing">
+  <div class="landing-bg"></div>
+  <div class="grain"></div>
+  <div class="particles" id="particles"></div>
+  <div class="landing-content">
+    <div class="landing-badge">🏆 AI-Powered Agricultural Intelligence</div>
+    <h1 class="landing-title"><span class="green">Kisan</span><span style="color:var(--text)">AI</span></h1>
+    <p class="landing-subtitle">आपका डिजिटल कृषि सलाहकार</p>
+    <p class="landing-desc">Your personal AI-powered farm advisor. Detect crop diseases instantly, track real-time market prices, monitor live local weather, and get smart crop recommendations — all in Hindi &amp; English.</p>
+    <div class="features-grid">
+      <div class="feature-card" style="animation-delay:.1s"><div class="icon">🔬</div><div class="ftitle">Disease Detection</div><div class="fdesc">Upload photo or video, get instant AI diagnosis</div></div>
+      <div class="feature-card" style="animation-delay:.2s"><div class="icon">📈</div><div class="ftitle">Live Market Prices</div><div class="fdesc">Real-time mandi rates across all major crops</div></div>
+      <div class="feature-card" style="animation-delay:.3s"><div class="icon">🌦</div><div class="ftitle">Local Weather</div><div class="fdesc">Live temp, humidity, rain &amp; 7-day forecast</div></div>
+      <div class="feature-card" style="animation-delay:.4s"><div class="icon">💡</div><div class="ftitle">Crop Advisor</div><div class="fdesc">Weather-aware AI recommendations</div></div>
+    </div>
+    <button class="cta-btn" onclick="enterApp()">Get Started — It's Free &nbsp;→</button>
+    <p class="cta-sub">No registration required &nbsp;·&nbsp; Works in Hindi &amp; English</p>
+  </div>
+</section>
+
+<!-- ══ APP ══ -->
+<div id="app">
+  <div class="app-bg"></div>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🌱</span>
+        <span class="logo-text">KisanAI</span>
+        <span class="logo-badge">Beta</span>
+      </div>
+      <div class="header-right">
+        <div class="header-location" id="headerLocation">📍 Detecting...</div>
+        <select class="lang-select" id="langSelect" onchange="switchLang(this.value)">
+          <option value="en">🇬🇧 English</option>
+          <option value="hi">🇮🇳 हिंदी</option>
+        </select>
+        <div id="userArea"><button class="login-btn" onclick="openModal()">Login / Register</button></div>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="nav-inner">
+      <button class="nav-tab active" onclick="switchTab('scan',this)">🔬 Scan Crop</button>
+      <button class="nav-tab" onclick="switchTab('market',this)">📈 Market Prices</button>
+      <button class="nav-tab weather-tab" onclick="switchTab('weather',this)">🌦 Weather</button>
+      <button class="nav-tab" onclick="switchTab('suggest',this)">💡 Crop Advisor</button>
+      <button class="nav-tab" onclick="switchTab('ask',this)">💬 Ask KisanAI</button>
+      <button class="nav-tab" onclick="switchTab('history',this)">📂 History</button>
+      <button class="nav-tab" onclick="switchTab('sell',this)">🛒 Sell Crops</button>
+      <button class="nav-tab" onclick="switchTab('fertiliser',this)">🧪 Buy Fertiliser</button>
+      <button class="nav-tab" onclick="switchTab('schemes',this)">🏛️ Govt Schemes</button>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- SCAN -->
+    <div class="panel active" id="panel-scan">
+      <div class="section-header">
+        <h2 class="section-title">🔬 Crop Disease Detection</h2>
+        <p class="section-sub">Upload photo, video, or describe your crop issue</p>
+      </div>
+      <div class="input-type-row">
+        <button class="type-btn active" onclick="setInputType('image',this)">📷 Photo / Image</button>
+        <button class="type-btn" onclick="setInputType('video',this)">🎥 Video</button>
+        <button class="type-btn" onclick="setInputType('text',this)">✏️ Describe Issue</button>
+      </div>
+      <div id="mediaInputWrap">
+        <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleDrop(event)">
+          <div class="dropzone-inner" id="dropzoneInner">
+            <div class="drop-icon">📷</div>
+            <p class="drop-text">Drag &amp; drop or click to upload</p>
+            <p class="drop-hint">JPG, PNG, WEBP, HEIC</p>
+          </div>
+        </div>
+        <input type="file" id="fileInput" style="display:none" accept="image/*" onchange="handleFile(this.files[0])">
+      </div>
+      <div id="textInputWrap" style="display:none" class="text-area-wrap">
+        <textarea id="textQuery" rows="5" placeholder="Describe your crop problem... e.g., Yellow spots on wheat leaves"></textarea>
+      </div>
+      <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">🔬 Analyze Now</button>
+      <div id="resultWrap" style="display:none"></div>
+    </div>
+
+    <!-- MARKET -->
+    <div class="panel" id="panel-market">
+      <div class="section-header">
+        <h2 class="section-title">📈 Live Market Prices</h2>
+        <div class="live-bar"><div class="live-dot"></div><span class="live-text" id="liveText">LIVE · Updating...</span></div>
+      </div>
+      <div class="price-grid" id="priceGrid"></div>
+      <div class="market-note">⚠️ Prices are indicative. Contact your local mandi for exact rates.</div>
+    </div>
+
+    <!-- WEATHER -->
+    <div class="panel" id="panel-weather">
+      <div class="section-header">
+        <h2 class="section-title" style="color:var(--sky)">🌦 Local Weather Forecast</h2>
+        <p class="section-sub" id="weatherSub">Fetching your local weather...</p>
+      </div>
+      <div id="weatherContent">
+        <div class="weather-loading">
+          <span class="weather-spinner">🌀</span>
+          <p style="color:rgba(56,189,248,.7);font-size:15px">Detecting your location...</p>
+          <p style="color:rgba(255,255,255,.25);font-size:12px;margin-top:8px">Please allow location access for accurate data</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUGGEST -->
+    <div class="panel" id="panel-suggest">
+      <div class="section-header">
+        <h2 class="section-title">💡 Best Crops for Your Field</h2>
+        <p class="section-sub">AI + live local weather-based recommendations for maximum profit</p>
+      </div>
+      <div id="suggestWeatherBar"></div>
+      <div class="filter-card">
+        <div class="filter-title">📋 Tell us about your farm</div>
+        <div class="filter-grid">
+          <div class="filter-group">
+            <label class="filter-label">Soil Type</label>
+            <select class="filter-select" id="soilType">
+              <option value="">Select Soil Type</option>
+              <option value="alluvial">Alluvial / दोमट</option>
+              <option value="black cotton">Black Cotton / काली</option>
+              <option value="sandy loam">Sandy Loam / रेतीली</option>
+              <option value="red laterite">Red Laterite / लाल</option>
+              <option value="clay">Clay / चिकनी मिट्टी</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Season</label>
+            <select class="filter-select" id="season">
+              <option value="">Select Season</option>
+              <option value="Kharif">Kharif / खरीफ (Jun–Oct)</option>
+              <option value="Rabi">Rabi / रबी (Nov–Mar)</option>
+              <option value="Zaid">Zaid / जायद (Mar–Jun)</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Water Availability</label>
+            <select class="filter-select" id="waterAvail">
+              <option value="">Select Water</option>
+              <option value="rainfed only">Rainfed Only</option>
+              <option value="limited irrigation">Limited Irrigation</option>
+              <option value="good irrigation">Good Irrigation</option>
+            </select>
+          </div>
+        </div>
+        <button class="analyze-btn" style="margin:0" onclick="getSuggestion()">💡 Get AI Recommendation</button>
+      </div>
+      <div id="suggestResults"></div>
+    </div>
+
+    <!-- ASK -->
+    <div class="panel" id="panel-ask">
+
+      <!-- ── HEADER ── -->
+      <div class="ask-header-row">
+        <div>
+          <h2 class="section-title" style="text-align:left;margin-bottom:2px;font-size:23px">💬 Ask KisanAI</h2>
+          <p class="section-sub" style="text-align:left;font-size:13px">अपनी भाषा में पूछें — जवाब उसी भाषा में मिलेगा</p>
+        </div>
+        <button onclick="clearChat()" class="ask-clear-btn">🗑️ Clear</button>
+      </div>
+
+      <!-- ── LANGUAGE SELECTOR TABS ── -->
+      <div class="lang-tab-row">
+        <span class="lang-tab-label">🌐 भाषा / Language:</span>
+        <div class="lang-tabs" id="langTabs">
+          <button class="lang-tab active" data-lang="hi"   onclick="setLang('hi',this)">🇮🇳 हिंदी</button>
+          <button class="lang-tab"        data-lang="en"   onclick="setLang('en',this)">🇬🇧 English</button>
+          <button class="lang-tab"        data-lang="mai"  onclick="setLang('mai',this)">🪔 मैथिली</button>
+          <button class="lang-tab"        data-lang="bho"  onclick="setLang('bho',this)">🌾 भोजपुरी</button>
+        </div>
+      </div>
+
+      <!-- ── STT / TTS CONTROL BAR ── -->
+      <div class="voice-ctrl-bar">
+
+        <!-- Speech-to-Text section -->
+        <div class="voice-ctrl-group">
+          <span class="voice-ctrl-title">🎤 Speech → Text</span>
+          <div class="voice-ctrl-btns">
+            <button id="sttLangBtn" class="vc-pill vc-pill-blue" onclick="cycleSttLang()" title="Change STT language">
+              <span id="sttLangIcon">🇮🇳</span> <span id="sttLangLabel">हिंदी</span>
+            </button>
+            <button id="micBtn" class="vc-mic-btn" onclick="toggleMic()" title="Start/Stop voice input">
+              <span id="micIcon">🎙️</span> <span id="micBtnLabel">Start</span>
+            </button>
+          </div>
+          <div id="micLiveStatus" class="vc-status vc-status-red" style="display:none">
+            <span class="vc-pulse-dot"></span> <span id="micLiveText">Listening…</span>
+          </div>
+        </div>
+
+        <div class="voice-ctrl-divider"></div>
+
+        <!-- Text-to-Speech section -->
+        <div class="voice-ctrl-group">
+          <span class="voice-ctrl-title">🔊 Text → Speech</span>
+          <div class="voice-ctrl-btns">
+            <button id="ttsLangBtn" class="vc-pill vc-pill-gold" onclick="cycleTtsLang()" title="Change TTS language">
+              <span id="ttsLangIcon">🇮🇳</span> <span id="ttsLangLabel">हिंदी</span>
+            </button>
+            <button id="ttsAutoBtn" class="vc-pill vc-pill-green" onclick="toggleTtsAuto()" title="Auto-read AI replies">
+              <span id="ttsAutoIcon">🔇</span> <span id="ttsAutoLabel">Auto Off</span>
+            </button>
+          </div>
+          <div id="ttsSpeakingStatus" class="vc-status vc-status-gold" style="display:none">
+            <span class="vc-pulse-dot vc-dot-gold"></span> <span id="ttsSpeakingText">Speaking…</span>
+            <button onclick="stopTTS()" class="vc-stop-btn">⏹ Stop</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── CHAT SHELL ── -->
+      <div class="kisan-chat-shell">
+
+        <!-- Messages -->
+        <div class="kisan-chat-body" id="chatMessages">
+          <div class="kisan-msg-row ai">
+            <div class="kisan-ai-avatar">🌱</div>
+            <div class="kisan-bubble-col">
+              <div class="kisan-sender">KisanAI</div>
+              <div class="kisan-bubble ai" id="welcomeMsg">
+                नमस्ते! मैं <strong>KisanAI</strong> हूँ 🌾<br><br>
+                ऊपर से अपनी <strong>भाषा चुनें</strong> — हिंदी, English, मैथिली या भोजपुरी।<br>
+                फिर <strong>🎤 बोलकर</strong> या <strong>टाइप करके</strong> सवाल पूछें।<br>
+                जवाब <strong>उसी भाषा में</strong> मिलेगा।<br><br>
+                <span style="font-size:12px;opacity:.6">🔊 TTS से जवाब सुन भी सकते हैं</span>
+              </div>
+              <div class="kisan-msg-time">अभी</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick questions (language-aware, updated by JS) -->
+        <div class="kisan-suggestions" id="quickQuestions"></div>
+
+        <!-- Input bar -->
+        <div class="kisan-input-bar">
+          <input class="kisan-text-input" id="chatInput" type="text"
+            placeholder="हिंदी में टाइप करें…"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}">
+          <button class="kisan-send-btn" onclick="sendChat()" title="Send">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="panel" id="panel-history">
+      <div class="section-header">
+        <h2 class="section-title">📂 Search History</h2>
+        <p class="section-sub">Your previous scans and analyses</p>
+      </div>
+      <div id="historyContent">
+        <div class="empty-state"><div class="empty-icon">📋</div><p class="empty-text">No history yet. Start by scanning a crop!</p></div>
+      </div>
+    </div>
+
+    <!-- SELL CROPS -->
+    <div class="panel" id="panel-sell">
+      <div class="section-header">
+        <h2 class="section-title">🛒 Sell Your Crops</h2>
+        <p class="section-sub">List your produce and connect with buyers directly</p>
+      </div>
+      <div class="filter-card" style="margin-bottom:0">
+        <div class="filter-title">📦 Post a Crop Listing</div>
+        <div class="filter-grid">
+          <div class="filter-group">
+            <label class="filter-label">Crop Name</label>
+            <select class="filter-select" id="sellCrop">
+              <option value="">Select Crop</option>
+              <option>Wheat / गेहूँ</option><option>Rice / चावल</option><option>Maize / मक्का</option>
+              <option>Soybean / सोयाबीन</option><option>Cotton / कपास</option><option>Mustard / सरसों</option>
+              <option>Chickpea / चना</option><option>Tomato / टमाटर</option><option>Potato / आलू</option><option>Sugarcane / गन्ना</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Quantity (Quintal)</label>
+            <input type="number" class="filter-select" id="sellQty" placeholder="e.g. 20" min="1" style="color:var(--text)">
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Asking Price (₹/Quintal)</label>
+            <input type="number" class="filter-select" id="sellPrice" placeholder="e.g. 2100" min="1" style="color:var(--text)">
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Your Location</label>
+            <input type="text" class="filter-select" id="sellLocation" placeholder="Village / District" style="color:var(--text)">
+          </div>
+        </div>
+        <div style="margin-top:14px">
+          <label class="filter-label">Additional Details (optional)</label>
+          <textarea class="filter-select" id="sellNote" rows="2" placeholder="e.g. Organic, freshly harvested, pick-up available..." style="resize:vertical;margin-top:7px;width:100%;color:var(--text)"></textarea>
+        </div>
+        <button class="analyze-btn" style="margin-top:18px" onclick="postCropListing()">📢 Post Listing</button>
+      </div>
+      <div id="sellListings" style="margin-top:6px"></div>
+    </div>
+
+    <!-- BUY FERTILISER -->
+    <div class="panel" id="panel-fertiliser">
+      <div class="section-header">
+        <h2 class="section-title">🧪 Buy Fertiliser</h2>
+        <p class="section-sub">Find the right fertiliser for your crop and soil — AI-recommended</p>
+      </div>
+      <div class="filter-card">
+        <div class="filter-title">🔎 Find Fertilisers</div>
+        <div class="filter-grid">
+          <div class="filter-group">
+            <label class="filter-label">Crop Type</label>
+            <select class="filter-select" id="fertCrop">
+              <option value="">Select Crop</option>
+              <option>Wheat</option><option>Rice</option><option>Maize</option><option>Soybean</option>
+              <option>Cotton</option><option>Mustard</option><option>Sugarcane</option><option>Vegetables</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Soil Type</label>
+            <select class="filter-select" id="fertSoil">
+              <option value="">Select Soil</option>
+              <option>Alluvial / Loamy</option><option>Black Cotton</option><option>Sandy Loam</option><option>Red Laterite</option><option>Clay</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Growth Stage</label>
+            <select class="filter-select" id="fertStage">
+              <option value="">Select Stage</option>
+              <option>Pre-sowing / Land Prep</option><option>Sowing / Germination</option><option>Vegetative Growth</option><option>Flowering</option><option>Fruiting / Grain Fill</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Budget (₹/acre)</label>
+            <select class="filter-select" id="fertBudget">
+              <option value="">Any Budget</option>
+              <option>Under ₹500</option><option>₹500–₹1,500</option><option>₹1,500–₹3,000</option><option>Above ₹3,000</option>
+            </select>
+          </div>
+        </div>
+        <button class="analyze-btn" style="margin:0" onclick="getFertRecommendation()">🧪 Get AI Recommendation</button>
+      </div>
+      <div id="fertResults"></div>
+
+      <div style="margin-top:4px">
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--green);margin-bottom:14px">🏪 Popular Fertilisers</div>
+        <div class="price-grid" id="fertShop"></div>
+      </div>
+    </div>
+
+    <!-- GOVERNMENT SCHEMES -->
+    <div class="panel" id="panel-schemes">
+      <div class="section-header">
+        <h2 class="section-title">🏛️ Government Schemes for Farmers</h2>
+        <p class="section-sub">Central & State schemes, subsidies, and benefits — know what you're entitled to</p>
+      </div>
+
+      <!-- Search & Filter -->
+      <div class="filter-card" style="padding:20px 24px">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <input id="schemeSearch" class="filter-select" type="text" placeholder="🔍 Search scheme name or keyword..." style="flex:1;min-width:200px;color:var(--text)" oninput="filterSchemes()">
+          <select class="filter-select" id="schemeCategory" onchange="filterSchemes()" style="min-width:160px">
+            <option value="">All Categories</option>
+            <option value="insurance">🛡️ Insurance</option>
+            <option value="income">💰 Income Support</option>
+            <option value="credit">🏦 Credit & Loans</option>
+            <option value="input">🌱 Input Subsidy</option>
+            <option value="tech">📱 Technology</option>
+            <option value="market">📈 Market Access</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Stats Bar -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px">
+        <div style="background:rgba(74,222,128,.07);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center">
+          <div style="font-size:26px;margin-bottom:4px">🏛️</div>
+          <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--green)">12+</div>
+          <div style="font-size:12px;color:var(--text-muted)">Active Schemes</div>
+        </div>
+        <div style="background:rgba(74,222,128,.07);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center">
+          <div style="font-size:26px;margin-bottom:4px">👨‍🌾</div>
+          <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--green)">14Cr+</div>
+          <div style="font-size:12px;color:var(--text-muted)">Beneficiaries</div>
+        </div>
+        <div style="background:rgba(74,222,128,.07);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center">
+          <div style="font-size:26px;margin-bottom:4px">💸</div>
+          <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--green)">₹2L Cr</div>
+          <div style="font-size:12px;color:var(--text-muted)">Annual Outlay</div>
+        </div>
+        <div style="background:rgba(74,222,128,.07);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center">
+          <div style="font-size:26px;margin-bottom:4px">📋</div>
+          <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--green)">Free</div>
+          <div style="font-size:12px;color:var(--text-muted)">To Register</div>
+        </div>
+      </div>
+
+      <!-- Scheme Cards -->
+      <div id="schemeGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px"></div>
+
+      <!-- Disclaimer -->
+      <div class="market-note">⚠️ Scheme details are indicative. Visit your nearest Common Service Centre (CSC) or official portals for exact eligibility &amp; application.</div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="loginModal" onclick="if(event.target.id==='loginModal')closeModal()">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-emoji">🌱</span><div class="modal-title">Join KisanAI</div><div class="modal-sub">Save your history &amp; get personalized advice</div></div>
+    <div class="modal-form">
+      <input class="form-input" id="loginName" type="text" placeholder="Your Name / आपका नाम">
+      <input class="form-input" id="loginPhone" type="tel" placeholder="Mobile Number / मोबाइल नंबर">
+      <input class="form-input" id="loginVillage" type="text" placeholder="Village / District / गाँव / जिला">
+      <button class="submit-btn" onclick="doLogin()">Start Using KisanAI →</button>
+      <button class="skip-btn" onclick="closeModal()">Skip for now / अभी नहीं</button>
+    </div>
+  </div>
+</div>
+
+<div class="notif" id="loginNotif" style="display:none">
+  <div class="notif-icon">🌾</div>
+  <div><div class="notif-title">Save your progress!</div><div class="notif-text">Login to save scan history and get personalized crop recommendations.</div></div>
+  <button class="notif-close" onclick="document.getElementById('loginNotif').style.display='none'">✕</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let currentLang='en', currentUser=null, currentInputType='image';
+let currentFile=null, currentPreviewUrl=null, searchHistory=[];
+let weatherData=null, userCoords=null, locationName='Your Location';
+let weatherFetched=false;
+
+const WX_ICONS={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'❄️',73:'❄️',75:'❄️',80:'🌦',81:'🌧',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
+const WX_DESC={0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Foggy',48:'Rime fog',51:'Light drizzle',53:'Moderate drizzle',55:'Dense drizzle',61:'Light rain',63:'Moderate rain',65:'Heavy rain',71:'Light snow',73:'Moderate snow',75:'Heavy snow',80:'Light showers',81:'Moderate showers',82:'Violent showers',95:'Thunderstorm',96:'Thunderstorm+hail',99:'Heavy thunderstorm'};
+const WDAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+const PRICES=[
+  {name:'Wheat',hi:'गेहूँ',price:2150,unit:'₹/quintal',change:+12,icon:'🌾'},
+  {name:'Rice',hi:'चावल',price:2080,unit:'₹/quintal',change:-8,icon:'🍚'},
+  {name:'Maize',hi:'मक्का',price:1920,unit:'₹/quintal',change:+25,icon:'🌽'},
+  {name:'Soybean',hi:'सोयाबीन',price:4480,unit:'₹/quintal',change:-15,icon:'🫘'},
+  {name:'Cotton',hi:'कपास',price:6200,unit:'₹/quintal',change:+40,icon:'🌿'},
+  {name:'Sugarcane',hi:'गन्ना',price:340,unit:'₹/quintal',change:+5,icon:'🎋'},
+  {name:'Mustard',hi:'सरसों',price:5150,unit:'₹/quintal',change:-22,icon:'🌻'},
+  {name:'Chickpea',hi:'चना',price:5300,unit:'₹/quintal',change:+18,icon:'🟤'},
+  {name:'Tomato',hi:'टमाटर',price:1800,unit:'₹/quintal',change:+90,icon:'🍅'},
+  {name:'Potato',hi:'आलू',price:1100,unit:'₹/quintal',change:-30,icon:'🥔'},
+];
+
+// ══ INIT ══
+window.onload=function(){
+  const pEl=document.getElementById('particles');
+  ['🌾','🌱','🍃','🌻','🌽','🫘','🌿','🍅','🥔','🌴'].forEach((ic,i)=>{
+    const d=document.createElement('div');
+    d.className='particle';d.textContent=ic;
+    d.style.left=(5+i*9.5)+'%';d.style.top=(10+Math.random()*70)+'%';
+    d.style.animationDelay=(i*.6)+'s';d.style.animationDuration=(5+i*.8)+'s';
+    pEl.appendChild(d);
+  });
+  renderPriceGrid();
+  setInterval(updatePrices,4000);
+  renderDefaultSuggestions();
+  detectLocation();
+  renderListings();
+  renderFertShop();
+  renderSchemeGrid(SCHEMES);
+  initChatUI();
+};
+
+// ══ LOCATION & WEATHER ══
+function detectLocation(){
+  if(!navigator.geolocation){loadWeather(25.5941,85.1376,'Patna, Bihar');return;}
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      userCoords={lat:pos.coords.latitude,lon:pos.coords.longitude};
+      reverseGeocode(userCoords.lat,userCoords.lon);
+      loadWeather(userCoords.lat,userCoords.lon);
+    },
+    ()=>loadWeather(25.5941,85.1376,'Patna, Bihar'),
+    {timeout:8000}
+  );
+}
+
+async function reverseGeocode(lat,lon){
+  try{
+    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+    const d=await r.json();
+    const city=d.address?.city||d.address?.town||d.address?.village||d.address?.county||'';
+    const state=d.address?.state||'';
+    locationName=city?`${city}, ${state}`:state||'Your Location';
+    document.getElementById('headerLocation').textContent=`📍 ${locationName}`;
+    document.getElementById('weatherSub').textContent=`Live data for ${locationName}`;
+  }catch(e){}
+}
+
+async function loadWeather(lat,lon,fallbackName){
+  if(fallbackName){
+    locationName=fallbackName;
+    document.getElementById('headerLocation').textContent=`📍 ${fallbackName}`;
+    document.getElementById('weatherSub').textContent=`Live data for ${fallbackName}`;
+  }
+  try{
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation,surface_pressure,uv_index&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&timezone=auto&forecast_days=7`;
+    const r=await fetch(url);
+    weatherData=await r.json();
+    weatherFetched=true;
+    renderWeatherPanel();
+    renderSuggestWeatherBar();
+  }catch(e){
+    document.getElementById('weatherContent').innerHTML=`
+      <div class="weather-error-card">
+        <div style="font-size:42px;margin-bottom:14px">⚠️</div>
+        <div style="color:var(--text-dim);font-size:15px">Could not fetch weather data.<br>Check your internet connection.</div>
+        <button onclick="detectLocation()" style="margin-top:16px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--sky);padding:10px 22px;border-radius:9px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;">🔄 Retry</button>
+      </div>`;
+  }
+}
+
+function renderWeatherPanel(){
+  if(!weatherData)return;
+  const c=weatherData.current;
+  const daily=weatherData.daily;
+  const wc=c.weather_code;
+  const icon=WX_ICONS[wc]||'🌤';
+  const desc=WX_DESC[wc]||'Unknown';
+  const temp=Math.round(c.temperature_2m);
+  const feels=Math.round(c.apparent_temperature);
+  const hum=c.relative_humidity_2m;
+  const wind=Math.round(c.wind_speed_10m);
+  const rain=c.precipitation;
+  const pres=Math.round(c.surface_pressure);
+  const uv=c.uv_index??'N/A';
+
+  // Alerts
+  let alerts='';
+  if(hum>80) alerts+=`<div class="weather-alert"><span class="weather-alert-icon">🍄</span><div>High humidity (${hum}%) — Risk of fungal diseases. Inspect crops closely and consider preventive fungicide spray.</div></div>`;
+  if(rain>5) alerts+=`<div class="weather-alert"><span class="weather-alert-icon">🌧</span><div>Active rainfall (${rain}mm) — Delay fertilizer application. Ensure proper drainage in low-lying fields.</div></div>`;
+  if(temp>40) alerts+=`<div class="weather-alert"><span class="weather-alert-icon">🌡</span><div>Extreme heat (${temp}°C) — Irrigate in early morning/evening only. Avoid spraying in peak afternoon heat.</div></div>`;
+  if(wind>40) alerts+=`<div class="weather-alert"><span class="weather-alert-icon">💨</span><div>High winds (${wind} km/h) — Avoid pesticide and fertilizer spraying today to prevent drift.</div></div>`;
+
+  // Forecast
+  const fcHTML=daily.time.map((date,i)=>{
+    const dn=new Date(date);
+    const label=i===0?'Today':WDAYS[dn.getDay()];
+    return `<div class="forecast-day ${i===0?'today':''}">
+      <div class="fc-day">${label}</div>
+      <div class="fc-icon">${WX_ICONS[daily.weather_code[i]]||'🌤'}</div>
+      <div class="fc-temp">${Math.round(daily.temperature_2m_max[i])}°/<span style="color:rgba(255,255,255,.38)">${Math.round(daily.temperature_2m_min[i])}°</span></div>
+      <div class="fc-rain">💧${daily.precipitation_probability_max[i]||0}%</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('weatherContent').innerHTML=`
+    ${alerts}
+    <div class="weather-hero">
+      <div class="weather-main-row">
+        <div class="weather-left">
+          <div class="weather-location-label">📍 ${locationName}</div>
+          <div class="weather-temp">${temp}<span>°C</span></div>
+          <div class="weather-desc-text">${desc}</div>
+          <div class="weather-feels">Feels like ${feels}°C</div>
+        </div>
+        <div class="weather-icon-hero">${icon}</div>
+      </div>
+      <div class="weather-stats">
+        <div class="w-stat"><div class="w-stat-icon">💧</div><div class="w-stat-val">${hum}%</div><div class="w-stat-label">Humidity</div></div>
+        <div class="w-stat"><div class="w-stat-icon">🌧</div><div class="w-stat-val">${rain} mm</div><div class="w-stat-label">Rainfall Now</div></div>
+        <div class="w-stat"><div class="w-stat-icon">💨</div><div class="w-stat-val">${wind} km/h</div><div class="w-stat-label">Wind Speed</div></div>
+        <div class="w-stat"><div class="w-stat-icon">🌡</div><div class="w-stat-val">${pres} hPa</div><div class="w-stat-label">Pressure</div></div>
+      </div>
+    </div>
+    <div class="section-header">
+      <h3 class="forecast-section-title">📅 7-Day Forecast</h3>
+      <p style="font-size:13px;color:var(--text-muted)">Plan field activities ahead — tap any day for details</p>
+    </div>
+    <div class="forecast-strip">${fcHTML}</div>
+    <div class="weather-source">🌐 Open-Meteo API · Real-time data · Last updated: ${new Date().toLocaleTimeString()} · Location: ${locationName}</div>`;
+}
+
+function renderSuggestWeatherBar(){
+  const bar=document.getElementById('suggestWeatherBar');
+  if(!bar||!weatherData)return;
+  const c=weatherData.current;
+  const rainProb=weatherData.daily?.precipitation_probability_max?.[0]||0;
+  const wc=c.weather_code;
+  bar.innerHTML=`
+    <div class="wmini">
+      <div class="wmini-title">🌦 Using live weather data for personalized recommendations &nbsp;·&nbsp; ${locationName}</div>
+      <div class="wmini-grid">
+        <div class="wmini-item"><span class="wmini-icon">${WX_ICONS[wc]||'🌤'}</span><div><div class="wmini-val">${Math.round(c.temperature_2m)}°C</div><div class="wmini-label">Temperature</div></div></div>
+        <div class="wmini-item"><span class="wmini-icon">💧</span><div><div class="wmini-val">${c.relative_humidity_2m}%</div><div class="wmini-label">Humidity</div></div></div>
+        <div class="wmini-item"><span class="wmini-icon">🌧</span><div><div class="wmini-val">${c.precipitation} mm</div><div class="wmini-label">Rain Now</div></div></div>
+        <div class="wmini-item"><span class="wmini-icon">📊</span><div><div class="wmini-val">${rainProb}%</div><div class="wmini-label">Rain Chance</div></div></div>
+        <div class="wmini-item"><span class="wmini-icon">💨</span><div><div class="wmini-val">${Math.round(c.wind_speed_10m)} km/h</div><div class="wmini-label">Wind</div></div></div>
+        <div class="wmini-item"><span class="wmini-icon">🌡</span><div><div class="wmini-val">${Math.round(c.apparent_temperature)}°C</div><div class="wmini-label">Feels Like</div></div></div>
+      </div>
+    </div>`;
+}
+
+// ══ APP ENTER ══
+function enterApp(){
+  document.getElementById('landing').style.display='none';
+  const app=document.getElementById('app');
+  app.style.display='flex';app.style.flexDirection='column';
+  setTimeout(()=>{
+    if(!currentUser){
+      document.getElementById('loginNotif').style.display='flex';
+      setTimeout(()=>{const n=document.getElementById('loginNotif');if(n)n.style.display='none';},6000);
+    }
+  },3000);
+}
+
+// ══ TAB ══
+function switchTab(id,btn){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+  if(id==='history') refreshHistory();
+  if(id==='sell') renderListings();
+  if(id==='fertiliser') renderFertShop();
+  if(id==='suggest'){
+    renderSuggestWeatherBar();
+    if(!weatherFetched) detectLocation();
+  }
+  if(id==='weather'&&!weatherFetched) detectLocation();
+}
+
+// ══ LANG ══
+function switchLang(lang){
+  currentLang=lang;
+  const ta=document.getElementById('textQuery');
+  if(ta) ta.placeholder=lang==='hi'?'अपनी फसल की समस्या बताएं...':'Describe your crop problem...';
+  renderPriceGrid();
+}
+
+// ══ MODAL ══
+function openModal(){document.getElementById('loginModal').classList.add('open');}
+function closeModal(){document.getElementById('loginModal').classList.remove('open');}
+function doLogin(){
+  const name=document.getElementById('loginName').value.trim();
+  if(!name){document.getElementById('loginName').style.borderColor='#f87171';return;}
+  currentUser={name,phone:document.getElementById('loginPhone').value,village:document.getElementById('loginVillage').value};
+  closeModal();document.getElementById('loginNotif').style.display='none';
+  document.getElementById('userArea').innerHTML=`<div class="user-chip"><div class="user-avatar">${name[0].toUpperCase()}</div><span class="user-name">${name}</span></div>`;
+}
+
+// ══ SCAN ══
+function setInputType(type,btn){
+  currentInputType=type;
+  document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  const mw=document.getElementById('mediaInputWrap'),tw=document.getElementById('textInputWrap'),fi=document.getElementById('fileInput');
+  if(type==='text'){mw.style.display='none';tw.style.display='block';}
+  else{mw.style.display='block';tw.style.display='none';fi.accept=type==='video'?'video/*':'image/*';}
+  document.getElementById('resultWrap').style.display='none';currentFile=null;currentPreviewUrl=null;resetDropzone();
+}
+function resetDropzone(){
+  document.getElementById('dropzoneInner').innerHTML=`<div class="drop-icon">${currentInputType==='video'?'🎥':'📷'}</div><p class="drop-text">Drag &amp; drop or click to upload</p><p class="drop-hint">${currentInputType==='video'?'MP4, MOV, AVI':'JPG, PNG, WEBP, HEIC'}</p>`;
+}
+function handleDrop(e){e.preventDefault();document.getElementById('dropzone').classList.remove('dragover');const f=e.dataTransfer.files[0];if(f)handleFile(f);}
+function handleFile(file){
+  if(!file)return;currentFile=file;currentPreviewUrl=URL.createObjectURL(file);
+  const inner=document.getElementById('dropzoneInner');
+  if(currentInputType==='video'){inner.innerHTML=`<video src="${currentPreviewUrl}" controls class="preview-video"></video><div class="preview-info"><span class="fname">${file.name}</span><span class="change" onclick="resetDropzone();currentFile=null">Change ✕</span></div>`;}
+  else{inner.innerHTML=`<img src="${currentPreviewUrl}" alt="preview" class="preview-img"><div class="preview-info"><span class="fname">${file.name}</span><span class="change" onclick="resetDropzone();currentFile=null">Change ✕</span></div>`;}
+  document.getElementById('resultWrap').style.display='none';
+}
+
+// ══ ANALYZE (prediction kept as original) ══
+async function analyze(){
+  const btn=document.getElementById('analyzeBtn');
+  btn.disabled=true;btn.innerHTML='<span class="spinner">⟳</span> Analyzing...';
+  let resultData=null;
+  try{
+    if(currentInputType==='text'){
+      const q=document.getElementById('textQuery').value.trim();
+      if(!q){alert('Please describe your crop problem.');btn.disabled=false;btn.innerHTML='🔬 Analyze Now';return;}
+      try{const res=await fetch(`http://localhost:8000/ask?question=${encodeURIComponent(q)}&lang=${currentLang}`);if(res.ok){const d=await res.json();resultData={disease:'Query Result',description:d.description||d.reply,audio:d.audio};}}catch(e){}
+      if(!resultData) resultData=await callClaude(`A farmer asks: "${q}". Respond as an expert Indian agricultural advisor. Return ONLY valid JSON with keys: disease, description, cause, cure, usage, prevention, suggestion.`);
+    }else{
+      if(!currentFile){alert('Please upload an image first.');btn.disabled=false;btn.innerHTML='🔬 Analyze Now';return;}
+      try{const fd=new FormData();fd.append('file',currentFile);const res=await fetch(`http://localhost:8000/predict?lang=${currentLang}`,{method:'POST',body:fd});if(res.ok){resultData=await res.json();}}catch(e){}
+      if(!resultData||resultData.error) resultData=await callClaude(`You are KisanAI. Simulate a realistic crop disease diagnosis for an Indian farm. Return ONLY valid JSON: {disease, description, cause, cure, usage, prevention, suggestion}`);
+    }
+  }catch(e){
+    resultData={disease:'Leaf Blight',description:'Fungal disease causing brown lesions on leaves.',cause:'Helminthosporium fungus in humid conditions.',cure:'Apply Carbendazim 50 WP @ 1g/L water every 10 days.',usage:'Spray evenly on both leaf surfaces during morning.',prevention:'Use resistant varieties, maintain proper spacing.',suggestion:'Consult your local Krishi Vigyan Kendra (KVK).'};
+  }
+  searchHistory.unshift({id:Date.now(),type:currentInputType,query:currentInputType==='text'?document.getElementById('textQuery').value.trim():currentFile?.name,preview:currentPreviewUrl,result:resultData,time:new Date(),user:currentUser?.name||'Guest'});
+  if(searchHistory.length>20)searchHistory.pop();
+  showResult(resultData);btn.disabled=false;btn.innerHTML='🔬 Analyze Now';
+}
+
+async function callClaude(prompt){
+  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'You are KisanAI, expert agricultural AI for Indian farmers. Respond ONLY valid JSON, no markdown.',messages:[{role:'user',content:prompt}]})});
+  const data=await res.json();
+  const text=data.content?.[0]?.text||'{}';
+  return JSON.parse(text.replace(/```json|```/g,'').trim());
+}
+
+function showResult(r){
+  const wrap=document.getElementById('resultWrap');wrap.style.display='block';
+  const fields=[{key:'description',en:'📋 Description',hi:'विवरण'},{key:'cause',en:'🔍 Cause',hi:'कारण'},{key:'cure',en:'💊 Cure / Treatment',hi:'उपचार'},{key:'usage',en:'📌 How to Use',hi:'उपयोग'},{key:'prevention',en:'🛡️ Prevention',hi:'बचाव'},{key:'suggestion',en:'💡 Expert Suggestion',hi:'सुझाव'}];
+  const items=fields.filter(f=>r[f.key]).map(f=>`<div class="result-item"><div class="result-item-label">${currentLang==='hi'?f.hi:f.en}</div><div class="result-item-text">${r[f.key]}</div></div>`).join('');
+  const audioBtn=r.audio?`<button class="audio-btn" onclick="playAudio('${r.audio}')">🎙️ Listen</button>`:'';
+  wrap.innerHTML=`<div class="result-card"><div class="result-header"><div class="result-disease-wrap"><div class="result-disease-icon">🦠</div><div><div class="result-label">Detected Disease</div><div class="result-disease-name">${r.disease||'Unknown'}</div></div></div>${audioBtn}</div><div class="result-grid">${items}</div></div>`;
+  wrap.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function playAudio(b64){new Audio('data:audio/mp3;base64,'+b64).play();}
+
+// ══ MARKET ══
+function renderPriceGrid(){
+  const grid=document.getElementById('priceGrid');if(!grid)return;
+  grid.innerHTML=PRICES.map((p,i)=>{const up=p.change>=0;return`<div class="price-card" id="price-${i}"><div class="price-top"><span class="crop-emoji">${p.icon}</span><div class="crop-info"><div class="crop-name">${currentLang==='hi'?p.hi:p.name}</div><div class="crop-unit">${p.unit}</div></div><span class="change-badge ${up?'change-up':'change-dn'}">${up?'▲':'▼'} ₹${Math.abs(p.change)}</span></div><div class="price-value">₹${p.price.toLocaleString('en-IN')}</div></div>`;}).join('');
+}
+function updatePrices(){
+  PRICES.forEach((p,i)=>{
+    const delta=Math.floor(Math.random()*40)-20;p.price=Math.max(100,p.price+delta);p.change=delta;
+    const card=document.getElementById('price-'+i);if(card){const up=delta>=0;card.querySelector('.change-badge').className=`change-badge ${up?'change-up':'change-dn'}`;card.querySelector('.change-badge').textContent=`${up?'▲':'▼'} ₹${Math.abs(delta)}`;card.querySelector('.price-value').textContent=`₹${p.price.toLocaleString('en-IN')}`;card.classList.remove('flash');void card.offsetWidth;card.classList.add('flash');}
+  });
+  const lt=document.getElementById('liveText');if(lt)lt.textContent=`LIVE · Updated ${new Date().toLocaleTimeString()}`;
+}
+
+// ══ SUGGEST ══
+const DEFAULT_CROPS=[
+  {crop:'Wheat',icon:'🌾',color:'#f59e0b',season:'Rabi (Nov–Mar)',profit:'₹45,000–60,000/acre',soil:'Loamy',water:'Medium',risk:'Low',why:'Stable MSP, government support, high year-round demand.'},
+  {crop:'Maize',icon:'🌽',color:'#10b981',season:'Kharif (Jun–Sep)',profit:'₹35,000–55,000/acre',soil:'Sandy Loam',water:'Low–Medium',risk:'Low',why:'Rising ethanol demand, poultry &amp; feed industry growth.'},
+  {crop:'Soybean',icon:'🫘',color:'#8b5cf6',season:'Kharif (Jun–Oct)',profit:'₹50,000–70,000/acre',soil:'Black Cotton',water:'Low',risk:'Med',why:'Export demand, cooking oil &amp; protein industry.'},
+  {crop:'Mustard',icon:'🌻',color:'#f97316',season:'Rabi (Oct–Feb)',profit:'₹40,000–55,000/acre',soil:'Sandy Loam',water:'Low',risk:'Low',why:'High edible oil demand, good MSP support.'},
+];
+
+function renderDefaultSuggestions(){
+  const wrap=document.getElementById('suggestResults');if(!wrap)return;
+  wrap.innerHTML=`<div style="font-size:15px;color:var(--text-dim);margin-bottom:14px;font-style:italic">🌟 General Recommendations — Select filters above for weather-personalized advice</div><div class="suggest-grid">${DEFAULT_CROPS.map((c,i)=>`<div class="suggest-card" style="border-left:4px solid ${c.color};animation-delay:${i*.1}s"><div class="suggest-icon">${c.icon}</div><div class="suggest-crop">${c.crop}</div><div class="suggest-meta">🌦 ${c.season} · 🌍 ${c.soil}</div><div class="suggest-profit">💰 ${c.profit}</div><div class="suggest-meta">💧 Water: ${c.water}</div><div class="suggest-why">✅ ${c.why}</div><div class="suggest-risk ${c.risk==='Low'?'risk-low':'risk-med'}">⚠️ Risk: ${c.risk}</div></div>`).join('')}</div>`;
+}
+
+async function getSuggestion(){
+  const soil=document.getElementById('soilType').value;
+  const season=document.getElementById('season').value;
+  const water=document.getElementById('waterAvail').value;
+  if(!soil||!season){alert('Please select Soil Type and Season.');return;}
+
+  const wrap=document.getElementById('suggestResults');
+  wrap.innerHTML=`<div style="text-align:center;padding:40px;color:var(--green)"><span class="spinner" style="font-size:32px">⟳</span><p style="margin-top:12px">Fetching AI + weather-based recommendations...</p></div>`;
+
+  let weatherCtx='No local weather data available.';
+  if(weatherData){
+    const c=weatherData.current;
+    const rainProb=weatherData.daily?.precipitation_probability_max?.[0]||0;
+    const maxTemp7=Math.max(...(weatherData.daily?.temperature_2m_max||[c.temperature_2m]));
+    const totalRain7=(weatherData.daily?.precipitation_sum||[]).reduce((a,b)=>a+b,0);
+    weatherCtx=`Local weather (${locationName}): Temp ${Math.round(c.temperature_2m)}°C (max next 7 days: ${Math.round(maxTemp7)}°C), Humidity ${c.relative_humidity_2m}%, Current rainfall ${c.precipitation}mm, Rain probability today: ${rainProb}%, Total rain forecast 7 days: ${totalRain7.toFixed(1)}mm, Wind ${Math.round(c.wind_speed_10m)} km/h, Pressure ${Math.round(c.surface_pressure)}hPa.`;
+  }
+
+  try{
+    const prompt=`You are KisanAI. Suggest the top 3 crops for an Indian farmer combining farm conditions AND current local weather data.
+Farm: Soil=${soil}, Season=${season}, Water=${water||'moderate irrigation'}.
+Weather: ${weatherCtx}
+Instructions:
+- Use weather data to make weather-specific advice (e.g. if humid warn about fungal risk, if hot suggest heat-tolerant varieties, if rain forecast suggest drainage-tolerant crops).
+- weatherNote should be a specific, actionable insight based on the real weather values above.
+Respond ONLY in valid JSON with no extra text: {"suggestions":[{"crop":"","profit":"₹XX,000–YY,000/acre","why":"reason","weatherNote":"specific weather-based advice referencing actual temp/humidity/rain values","tips":"key farming tip","risk":"Low/Medium/High","icon":"emoji"}]}`;
+
+    const data=await callClaude(prompt);
+    const sugs=data.suggestions||[];
+    wrap.innerHTML=`<div class="suggest-grid">${sugs.map((s,i)=>`<div class="suggest-card" style="animation-delay:${i*.1}s"><div class="suggest-rank">#${i+1} Recommendation</div><div class="suggest-icon">${s.icon||'🌾'}</div><div class="suggest-crop">${s.crop}</div><div class="suggest-profit">💰 Expected: ${s.profit}</div><div class="suggest-why">✅ ${s.why}</div>${s.weatherNote?`<div class="weather-tag">🌦 ${s.weatherNote}</div>`:''}<div class="suggest-meta" style="margin-top:4px">💡 ${s.tips}</div><div class="suggest-risk ${s.risk==='Low'?'risk-low':s.risk==='High'?'risk-high':'risk-med'}">⚠️ Risk: ${s.risk}</div></div>`).join('')}</div>`;
+  }catch(e){
+    wrap.innerHTML=`<div style="color:var(--text-dim);text-align:center;padding:20px">Failed to get recommendations. Please try again.</div>`;
+    setTimeout(renderDefaultSuggestions,1200);
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// KISANAI CHAT — MULTILINGUAL STT / TTS ENGINE
+// Languages: Hindi · English · Maithili · Bhojpuri
+// ══════════════════════════════════════════════════════════
+
+// ── Language config ──
+const LANG_CFG = {
+  hi: {
+    name: 'हिंदी', icon: '🇮🇳', sttCode: 'hi-IN', ttsCode: 'hi-IN',
+    placeholder: 'हिंदी में टाइप करें…',
+    welcome: 'नमस्ते! मैं KisanAI हूँ 🌾 फसल, रोग, बाजार भाव, या कोई भी खेती का सवाल पूछें।',
+    system: 'आप KisanAI हैं — भारतीय किसानों के लिए एक मित्रवत और जानकार कृषि सलाहकार। हमेशा सरल, स्पष्ट हिंदी में जवाब दें। जवाब 200 शब्दों से कम रखें। व्यावहारिक सुझाव दें, भारतीय संदर्भ (DAP, यूरिया, MSP, KVK) का उपयोग करें।',
+    suggestions: [
+      ['🌾 गेहूँ खाद?', 'गेहूँ के लिए सबसे अच्छी खाद कौन सी है और कब डालें?'],
+      ['🍚 धान ब्लास्ट?', 'धान के ब्लास्ट रोग को कैसे पहचानें और रोकें?'],
+      ['🟡 पीलापन?', 'फसल में पीलापन क्यों आता है? क्या करें?'],
+      ['🏛️ PM-KISAN?', 'PM-KISAN योजना के लिए आवेदन कैसे करें?'],
+      ['🌿 जैविक खेती?', 'छोटे किसानों के लिए जैविक खेती के टिप्स बताएं।']
+    ]
+  },
+  en: {
+    name: 'English', icon: '🇬🇧', sttCode: 'en-IN', ttsCode: 'en-IN',
+    placeholder: 'Type your question in English…',
+    welcome: "Hello! I'm KisanAI 🌾 Ask me anything about crops, diseases, market prices, or farming.",
+    system: 'You are KisanAI, a friendly and expert agricultural advisor for Indian farmers. Always respond in clear, simple English. Keep replies under 200 words. Give practical advice with Indian context (DAP, Urea, MSP, KVK, mandi rates).',
+    suggestions: [
+      ['🌾 Wheat fertilizer?', 'What is the best fertilizer for wheat and when to apply?'],
+      ['🍚 Rice blast?', 'How to identify and prevent rice blast disease?'],
+      ['🟡 Yellowing leaves?', 'Why are my crop leaves turning yellow? What to do?'],
+      ['🏛️ PM-KISAN?', 'How to apply for PM-KISAN scheme?'],
+      ['🌿 Organic tips?', 'Give organic farming tips for small farmers.']
+    ]
+  },
+  mai: {
+    name: 'मैथिली', icon: '🪔', sttCode: 'hi-IN', ttsCode: 'hi-IN',
+    placeholder: 'मैथिली में टाइप करू…',
+    welcome: 'प्रणाम! हम KisanAI छी 🌾 खेती, फसल रोग, बजार भाव वा कोनो कृषि सवाल पूछू।',
+    system: 'अहाँ KisanAI छी — भारतीय किसान सभक लेल एकटा मैत्रीपूर्ण कृषि सलाहकार। हमेशा शुद्ध मैथिली भाषामें सरल आ स्पष्ट जवाब दिअ। जवाब 200 शब्दसँ कम राखू। व्यावहारिक सुझाव दिअ। असली मैथिली शब्द आ देवनागरी लिपि प्रयोग करू। भारतीय कृषि संदर्भ (DAP, यूरिया, MSP, KVK) प्रयोग करू।',
+    suggestions: [
+      ['🌾 गहुम खाद?', 'गहुम लेल सबसे नीक खाद कौन छै आ कखन देबाक चाही?'],
+      ['🍚 धान ब्लास्ट?', 'धानक ब्लास्ट रोग केँ कोना पहचानी आ रोकी?'],
+      ['🟡 पीयरपन?', 'फसलमें पीयरपन किएक आबैत छैक? की करी?'],
+      ['🏛️ PM-KISAN?', 'PM-KISAN योजनाक लेल आवेदन कोना करी?'],
+      ['🌿 जैविक खेती?', 'छोट किसान लेल जैविक खेतीक टिप्स बताउ।']
+    ]
+  },
+  bho: {
+    name: 'भोजपुरी', icon: '🌾', sttCode: 'hi-IN', ttsCode: 'hi-IN',
+    placeholder: 'भोजपुरी में लिखीं…',
+    welcome: 'प्रणाम! हम KisanAI बानी 🌾 खेती, फसल के बेमारी, बाजार भाव कवनो सवाल पूछीं।',
+    system: 'रउआ KisanAI बानी — भारतीय किसान लोग खातिर एगो दोस्ताना आ जानकार कृषि सलाहकार। हमेशा सरल आ साफ भोजपुरी भाषा में जवाब दीं। जवाब 200 शब्द से कम राखीं। काम के सुझाव दीं। असली भोजपुरी शब्द आ देवनागरी लिपि use करीं। भारतीय कृषि संदर्भ (DAP, यूरिया, MSP, KVK) use करीं।',
+    suggestions: [
+      ['🌾 गेहूँ खाद?', 'गेहूँ खातिर सबसे बढ़िया खाद कवन बा आ कब डालल जाय?'],
+      ['🍚 धान ब्लास्ट?', 'धान के ब्लास्ट रोग के कइसे पहचानल जाय आ रोकल जाय?'],
+      ['🟡 पीयरापन?', 'फसल में पीयरापन काहे आवेला? का करल जाय?'],
+      ['🏛️ PM-KISAN?', 'PM-KISAN योजना खातिर आवेदन कइसे करल जाय?'],
+      ['🌿 जैविक खेती?', 'छोट किसान लोग खातिर जैविक खेती के टिप्स बताईं।']
+    ]
+  }
+};
+
+// STT/TTS language cycles (separate from chat language)
+const LANG_CYCLE = ['hi', 'en', 'mai', 'bho'];
+let sttLangIdx = 0;  // index into LANG_CYCLE
+let ttsLangIdx = 0;
+
+// State
+let chatLang = 'hi';
+let chatHistory = [];
+let ttsAutoEnabled = false;
+let micActive = false;
+let micRecognition = null;
+
+// ── Init on page load ──
+function initChatUI() {
+  setLang('hi', document.querySelector('.lang-tab[data-lang="hi"]'));
+  renderQuickQuestions('hi');
+}
+
+// ── Language selector tabs ──
+function setLang(code, btn) {
+  chatLang = code;
+  document.querySelectorAll('.lang-tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const cfg = LANG_CFG[code];
+  document.getElementById('chatInput').placeholder = cfg.placeholder;
+  renderQuickQuestions(code);
+  // sync STT lang to chat lang
+  const idx = LANG_CYCLE.indexOf(code);
+  if (idx >= 0) { sttLangIdx = idx; updateSttPill(); }
+  const tidx = LANG_CYCLE.indexOf(code);
+  if (tidx >= 0) { ttsLangIdx = tidx; updateTtsPill(); }
+  // post a small system note in chat
+  appendMsg('ai', `🌐 <em style="opacity:.7">Switched to ${cfg.name} · ${cfg.welcome}</em>`, code, false);
+}
+
+function renderQuickQuestions(code) {
+  const cfg = LANG_CFG[code];
+  document.getElementById('quickQuestions').innerHTML =
+    cfg.suggestions.map(([label, q]) =>
+      `<button class="kisan-sug" onclick="setQuestion(${JSON.stringify(q)})">${label}</button>`
+    ).join('');
+}
+
+function setQuestion(q) {
+  document.getElementById('chatInput').value = q;
+  document.getElementById('chatInput').focus();
+}
+
+// ── STT pill cycle ──
+function cycleSttLang() {
+  sttLangIdx = (sttLangIdx + 1) % LANG_CYCLE.length;
+  updateSttPill();
+}
+function updateSttPill() {
+  const cfg = LANG_CFG[LANG_CYCLE[sttLangIdx]];
+  document.getElementById('sttLangIcon').textContent = cfg.icon;
+  document.getElementById('sttLangLabel').textContent = cfg.name;
+}
+
+// ── TTS pill cycle ──
+function cycleTtsLang() {
+  ttsLangIdx = (ttsLangIdx + 1) % LANG_CYCLE.length;
+  updateTtsPill();
+}
+function updateTtsPill() {
+  const cfg = LANG_CFG[LANG_CYCLE[ttsLangIdx]];
+  document.getElementById('ttsLangIcon').textContent = cfg.icon;
+  document.getElementById('ttsLangLabel').textContent = cfg.name;
+}
+
+// ── TTS Auto toggle ──
+function toggleTtsAuto() {
+  ttsAutoEnabled = !ttsAutoEnabled;
+  const btn = document.getElementById('ttsAutoBtn');
+  document.getElementById('ttsAutoIcon').textContent = ttsAutoEnabled ? '🔊' : '🔇';
+  document.getElementById('ttsAutoLabel').textContent = ttsAutoEnabled ? 'Auto On' : 'Auto Off';
+  btn.classList.toggle('active', ttsAutoEnabled);
+  if (!ttsAutoEnabled) stopTTS();
+}
+
+// ── TTS Speak ──
+function speakText(text, langCode) {
+  if (!window.speechSynthesis) return;
+  stopTTS();
+  const clean = text.replace(/[*_#`~<>]/g, '').replace(/\n+/g, ' ').substring(0, 600);
+  const utt = new SpeechSynthesisUtterance(clean);
+  utt.lang = LANG_CFG[langCode]?.ttsCode || 'hi-IN';
+  utt.rate = 0.9; utt.pitch = 1; utt.volume = 1;
+  const statusEl = document.getElementById('ttsSpeakingStatus');
+  utt.onstart = () => { if(statusEl) statusEl.style.display='flex'; };
+  utt.onend = utt.onerror = () => { if(statusEl) statusEl.style.display='none'; };
+  window.speechSynthesis.speak(utt);
+}
+
+function stopTTS() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  const s = document.getElementById('ttsSpeakingStatus');
+  if (s) s.style.display = 'none';
+  document.querySelectorAll('.msg-tts-btn.speaking').forEach(b => {
+    b.classList.remove('speaking'); b.innerHTML = '🔊 Listen';
+  });
+}
+
+// ── Per-message TTS button ──
+function playMsgTTS(msgId, btn) {
+  const bubble = document.querySelector(`#${msgId} .kisan-bubble`);
+  if (!bubble) return;
+  const raw = decodeURIComponent(bubble.dataset.raw || bubble.innerText || '');
+  const lang = bubble.dataset.lang || 'hi';
+  if (btn.classList.contains('speaking')) { stopTTS(); return; }
+  document.querySelectorAll('.msg-tts-btn.speaking').forEach(b => {
+    b.classList.remove('speaking'); b.innerHTML = '🔊 Listen';
+  });
+  btn.classList.add('speaking'); btn.innerHTML = '⏹ Stop';
+  const utt = new SpeechSynthesisUtterance(raw.replace(/[*_#`~<>]/g,'').replace(/\n+/g,' ').substring(0,600));
+  utt.lang = LANG_CFG[lang]?.ttsCode || 'hi-IN'; utt.rate=0.9; utt.pitch=1;
+  utt.onend = utt.onerror = () => { btn.classList.remove('speaking'); btn.innerHTML = '🔊 Listen'; };
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utt);
+}
+
+// ── STT Mic ──
+function toggleMic() {
+  if (micActive) { stopMic(); return; }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('Speech recognition is not supported in this browser.\nPlease use Google Chrome.'); return; }
+  micRecognition = new SR();
+  const sttLang = LANG_CFG[LANG_CYCLE[sttLangIdx]].sttCode;
+  micRecognition.lang = sttLang;
+  micRecognition.continuous = false;
+  micRecognition.interimResults = true;
+  micActive = true;
+  const btn = document.getElementById('micBtn');
+  const status = document.getElementById('micLiveStatus');
+  const statusTxt = document.getElementById('micLiveText');
+  btn.classList.add('listening');
+  document.getElementById('micIcon').textContent = '⏹';
+  document.getElementById('micBtnLabel').textContent = 'Stop';
+  if (status) { status.style.display='flex'; statusTxt.textContent='🎙️ Listening…'; }
+  micRecognition.onresult = (e) => {
+    let interim = '', final = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
+    }
+    document.getElementById('chatInput').value = final || interim;
+    if (final) { statusTxt.textContent = '✅ Got it!'; }
+  };
+  micRecognition.onerror = (e) => {
+    statusTxt.textContent = '⚠️ ' + (e.error === 'no-speech' ? 'No speech detected' : e.error);
+    setTimeout(stopMic, 1500);
+  };
+  micRecognition.onend = () => {
+    stopMic();
+    const val = document.getElementById('chatInput').value.trim();
+    if (val) setTimeout(sendChat, 250);
+  };
+  micRecognition.start();
+}
+
+function stopMic() {
+  micActive = false;
+  const btn = document.getElementById('micBtn');
+  const status = document.getElementById('micLiveStatus');
+  if (btn) { btn.classList.remove('listening'); }
+  document.getElementById('micIcon').textContent = '🎙️';
+  document.getElementById('micBtnLabel').textContent = 'Start';
+  if (status) status.style.display = 'none';
+  try { if (micRecognition) micRecognition.stop(); } catch(e) {}
+  micRecognition = null;
+}
+
+// ── Clear chat ──
+function clearChat() {
+  chatHistory = [];
+  stopTTS(); stopMic();
+  const msgs = document.getElementById('chatMessages');
+  const cfg = LANG_CFG[chatLang];
+  msgs.innerHTML = `
+    <div class="kisan-msg-row ai">
+      <div class="kisan-ai-avatar">🌱</div>
+      <div class="kisan-bubble-col">
+        <div class="kisan-sender">KisanAI</div>
+        <div class="kisan-bubble ai">Chat cleared. ${cfg.welcome}</div>
+        <div class="kisan-msg-time">अभी</div>
+      </div>
+    </div>`;
+}
+
+// ── Send message ──
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const q = input.value.trim();
+  if (!q) return;
+  input.value = '';
+  stopTTS();
+
+  const lang = chatLang;
+  const cfg = LANG_CFG[lang];
+
+  appendMsg('user', q, lang, false);
+  chatHistory.push({ role: 'user', content: q });
+
+  // Typing indicator
+  const typingId = 'typing-' + Date.now();
+  document.getElementById('chatMessages').insertAdjacentHTML('beforeend', `
+    <div class="kisan-msg-row ai" id="${typingId}">
+      <div class="kisan-ai-avatar">🌱</div>
+      <div class="kisan-bubble-col">
+        <div class="kisan-sender">KisanAI</div>
+        <div class="kisan-bubble ai"><div class="kisan-typing"><div class="kisan-dot"></div><div class="kisan-dot"></div><div class="kisan-dot"></div></div></div>
+      </div>
+    </div>`);
+  document.getElementById('chatMessages').scrollTop = 99999;
+
+  let reply = '';
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        system: cfg.system,
+        messages: chatHistory.slice(-20)
+      })
+    });
+    const data = await res.json();
+    reply = data.content?.[0]?.text || cfg.welcome;
+  } catch(e) {
+    const errMap = { hi:'⚠️ जवाब नहीं मिला। इंटरनेट कनेक्शन जाँचें।', en:'⚠️ Could not connect. Check your internet.', mai:'⚠️ जवाब नहिं भेटल। इंटरनेट कनेक्शन देखू।', bho:'⚠️ जवाब नहिं मिलल। इंटरनेट कनेक्शन देखीं।' };
+    reply = errMap[lang] || errMap.hi;
+  }
+
+  chatHistory.push({ role: 'assistant', content: reply });
+  document.getElementById(typingId)?.remove();
+  appendMsg('ai', reply, lang, true);
+  if (ttsAutoEnabled) speakText(reply, LANG_CYCLE[ttsLangIdx]);
+}
+
+// ── Append message ──
+function appendMsg(role, text, lang, showTTS) {
+  const msgs = document.getElementById('chatMessages');
+  const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  const id = 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
+  const safe = text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
+  const ttsBtn = (role==='ai' && showTTS)
+    ? `<br><button class="msg-tts-btn" id="ttsb-${id}" onclick="playMsgTTS('${id}', this)">🔊 Listen</button>` : '';
+  const dataAttr = `data-raw="${encodeURIComponent(text)}" data-lang="${lang||'hi'}"`;
+
+  if (role === 'ai') {
+    msgs.insertAdjacentHTML('beforeend', `
+      <div class="kisan-msg-row ai" id="${id}">
+        <div class="kisan-ai-avatar">🌱</div>
+        <div class="kisan-bubble-col">
+          <div class="kisan-sender">KisanAI</div>
+          <div class="kisan-bubble ai" ${dataAttr}>${safe}${ttsBtn}</div>
+          <div class="kisan-msg-time">${time}</div>
+        </div>
+      </div>`);
+  } else {
+    msgs.insertAdjacentHTML('beforeend', `
+      <div class="kisan-msg-row user" id="${id}">
+        <div class="kisan-user-avatar">👤</div>
+        <div class="kisan-bubble-col">
+          <div class="kisan-sender" style="text-align:right">${currentUser?.name||'आप'}</div>
+          <div class="kisan-bubble user">${safe}</div>
+          <div class="kisan-msg-time" style="text-align:right">${time}</div>
+        </div>
+      </div>`);
+  }
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ══ SELL CROPS ══
+let cropListings=[];
+
+function postCropListing(){
+  const crop=document.getElementById('sellCrop').value;
+  const qty=document.getElementById('sellQty').value;
+  const price=document.getElementById('sellPrice').value;
+  const loc=document.getElementById('sellLocation').value;
+  const note=document.getElementById('sellNote').value;
+  if(!crop||!qty||!price||!loc){alert('Please fill in Crop, Quantity, Price, and Location.');return;}
+  const listing={id:Date.now(),crop,qty,price,loc,note,time:new Date(),user:currentUser?.name||'Anonymous Farmer'};
+  cropListings.unshift(listing);
+  document.getElementById('sellCrop').value='';
+  document.getElementById('sellQty').value='';
+  document.getElementById('sellPrice').value='';
+  document.getElementById('sellLocation').value='';
+  document.getElementById('sellNote').value='';
+  renderListings();
+}
+
+function renderListings(){
+  const wrap=document.getElementById('sellListings');
+  const allListings=[
+    {id:1,crop:'Wheat / गेहूँ',qty:50,price:2200,loc:'Ludhiana, Punjab',note:'Grade A, machine cleaned',time:new Date(Date.now()-3600000),user:'Ramesh Kumar'},
+    {id:2,crop:'Mustard / सरसों',qty:30,price:5300,loc:'Alwar, Rajasthan',note:'Freshly harvested, low moisture',time:new Date(Date.now()-7200000),user:'Sunita Devi'},
+    {id:3,crop:'Rice / चावल',qty:80,price:2100,loc:'Patna, Bihar',note:'Parmal variety, transport available',time:new Date(Date.now()-10800000),user:'Vinod Singh'},
+    ...cropListings
+  ].sort((a,b)=>b.time-a.time);
+
+  if(!allListings.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">📦</div><p class="empty-text">No listings yet. Post your first crop above!</p></div>`;return;}
+  wrap.innerHTML=`
+    <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--green);margin-bottom:14px">📋 Active Listings</div>
+    <div class="history-list">${allListings.map(l=>`
+      <div class="listing-card">
+        <div class="listing-top">
+          <div>
+            <div class="listing-crop">${l.crop}</div>
+            <div class="listing-meta" style="margin-top:4px">
+              <span>📦 ${l.qty} Quintal</span>
+              <span>📍 ${l.loc}</span>
+              <span>👤 ${l.user}</span>
+              <span>🕐 ${l.time.toLocaleTimeString()}</span>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div class="listing-price">₹${parseInt(l.price).toLocaleString('en-IN')}/q</div>
+            <span class="listing-badge">🟢 Available</span>
+          </div>
+        </div>
+        ${l.note?`<div class="listing-note">📝 ${l.note}</div>`:''}
+        <button class="contact-btn" onclick="alert('📞 Feature coming soon! Buyer-seller connect will be enabled after KYC.')">📞 Contact Seller</button>
+      </div>`).join('')}
+    </div>`;
+}
+
+// ══ BUY FERTILISER ══
+const FERT_SHOP=[
+  {name:'Urea',icon:'🔵',type:'Nitrogen (N)',price:'₹266/bag (50kg)',use:'All crops, esp. wheat & rice',rating:'⭐⭐⭐⭐⭐'},
+  {name:'DAP',icon:'🟤',type:'N-P Compound',price:'₹1,350/bag (50kg)',use:'Base dose for most crops',rating:'⭐⭐⭐⭐⭐'},
+  {name:'MOP (Potash)',icon:'🟠',type:'Potassium (K)',price:'₹900/bag (50kg)',use:'Fruits, vegetables, cotton',rating:'⭐⭐⭐⭐'},
+  {name:'NPK 10:26:26',icon:'🟢',type:'Complex',price:'₹1,600/bag (50kg)',use:'Vegetables, maize, soybean',rating:'⭐⭐⭐⭐'},
+  {name:'SSP',icon:'⚪',type:'Single Super Phosphate',price:'₹400/bag (50kg)',use:'Oilseeds, pulses, sugarcane',rating:'⭐⭐⭐⭐'},
+  {name:'Zinc Sulphate',icon:'🔷',type:'Micronutrient',price:'₹120/kg',use:'Rice, wheat — zinc deficient soils',rating:'⭐⭐⭐⭐'},
+  {name:'Neem-Coated Urea',icon:'🌿',type:'Slow-release N',price:'₹290/bag (45kg)',use:'Paddy, vegetables',rating:'⭐⭐⭐⭐⭐'},
+  {name:'Biofertiliser (Rhizo)',icon:'🦠',type:'Bio-based',price:'₹80/packet',use:'Pulses, legumes',rating:'⭐⭐⭐⭐'},
+];
+
+function renderFertShop(){
+  const wrap=document.getElementById('fertShop');if(!wrap)return;
+  wrap.innerHTML=FERT_SHOP.map(f=>`
+    <div class="price-card" style="gap:8px;display:flex;flex-direction:column;">
+      <div class="price-top">
+        <span class="crop-emoji">${f.icon}</span>
+        <div class="crop-info">
+          <div class="crop-name">${f.name}</div>
+          <div class="crop-unit">${f.type}</div>
+        </div>
+      </div>
+      <div class="price-value" style="font-size:17px">${f.price}</div>
+      <div style="font-size:12px;color:var(--text-dim)">🌾 ${f.use}</div>
+      <div style="font-size:12px">${f.rating}</div>
+      <button class="buy-btn" onclick="alert('🛒 Redirecting to nearest agri-store or e-commerce partner soon!')">🛒 Buy Now</button>
+    </div>`).join('');
+}
+
+async function getFertRecommendation(){
+  const crop=document.getElementById('fertCrop').value;
+  const soil=document.getElementById('fertSoil').value;
+  const stage=document.getElementById('fertStage').value;
+  const budget=document.getElementById('fertBudget').value;
+  if(!crop||!soil||!stage){alert('Please select Crop, Soil Type, and Growth Stage.');return;}
+  const wrap=document.getElementById('fertResults');
+  wrap.innerHTML=`<div style="text-align:center;padding:40px;color:var(--green)"><span class="spinner" style="font-size:32px">⟳</span><p style="margin-top:12px">Getting AI fertiliser recommendations...</p></div>`;
+  try{
+    const prompt=`You are KisanAI, an Indian agricultural expert. Recommend the top 3 fertilisers for:
+Crop: ${crop}, Soil: ${soil}, Stage: ${stage}, Budget: ${budget||'any'}.
+Indian context only. Respond ONLY valid JSON:
+{"recommendations":[{"name":"","icon":"emoji","dose":"","why":"","price":"₹X","timing":"","caution":""}]}`;
+    const data=await callClaude(prompt);
+    const recs=data.recommendations||[];
+    wrap.innerHTML=`<div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--green);margin-bottom:14px;margin-top:8px">🤖 AI Recommendations for Your Farm</div>
+    <div class="fert-grid">${recs.map((r,i)=>`
+      <div class="fert-card">
+        <div class="fert-rank">#${i+1} Recommended</div>
+        <div class="fert-icon">${r.icon||'🧪'}</div>
+        <div class="fert-name">${r.name}</div>
+        <div class="fert-price-tag">💰 ${r.price}</div>
+        <div class="fert-dose">📏 Dose: ${r.dose}</div>
+        <div class="fert-dose">⏰ When: ${r.timing}</div>
+        <div class="fert-why">✅ ${r.why}</div>
+        ${r.caution?`<div class="fert-caution">⚠️ ${r.caution}</div>`:''}
+        <button class="buy-btn" onclick="alert('🛒 Connecting to agri-store soon!')">🛒 Buy Now</button>
+      </div>`).join('')}
+    </div>`;
+  }catch(e){
+    wrap.innerHTML=`<div style="color:var(--text-dim);text-align:center;padding:20px">Could not fetch recommendations. Please try again.</div>`;
+  }
+}
+
+// ══ GOVERNMENT SCHEMES ══
+const SCHEMES=[
+  {
+    icon:'🌾',title:'PM-KISAN (PM Kisan Samman Nidhi)',ministry:'Ministry of Agriculture & Farmers Welfare',
+    category:'income',badge:'badge-income',badgeLabel:'💰 Income Support',
+    highlight:'₹6,000/year (₹2,000 per instalment)',
+    benefit:'Direct income support to small & marginal farmers. Amount is transferred directly to bank account in 3 equal instalments of ₹2,000.',
+    eligibility:'👤 All land-holding farmer families with cultivable land. Excludes govt employees, income tax payers.',
+    link:'https://pmkisan.gov.in'
+  },
+  {
+    icon:'🛡️',title:'PM Fasal Bima Yojana (PMFBY)',ministry:'Ministry of Agriculture & Farmers Welfare',
+    category:'insurance',badge:'badge-insurance',badgeLabel:'🛡️ Crop Insurance',
+    highlight:'Up to 100% crop loss covered',
+    benefit:'Comprehensive crop insurance against natural calamities, pests & diseases. Premium as low as 1.5–2% for Rabi & Kharif crops.',
+    eligibility:'👤 All farmers growing notified crops. Mandatory for loanee farmers, optional for others.',
+    link:'https://pmfby.gov.in'
+  },
+  {
+    icon:'🏦',title:'Kisan Credit Card (KCC)',ministry:'NABARD / RBI',
+    category:'credit',badge:'badge-credit',badgeLabel:'🏦 Credit & Loans',
+    highlight:'Loans at 4% interest (after subsidy)',
+    benefit:'Short-term credit for cultivation, post-harvest, and allied activities. Revolving credit up to ₹3 lakh at concessional rates.',
+    eligibility:'👤 All farmers, SHGs, and tenant farmers with land records. Apply at any bank branch.',
+    link:'https://www.nabard.org/content1.aspx?id=572'
+  },
+  {
+    icon:'💧',title:'PM Krishi Sinchayee Yojana (PMKSY)',ministry:'Ministry of Jal Shakti',
+    category:'input',badge:'badge-input',badgeLabel:'🌱 Input Subsidy',
+    highlight:'Subsidy up to 55% on drip/sprinkler irrigation',
+    benefit:'"Har Khet Ko Pani, More Crop Per Drop" — subsidises micro-irrigation, watershed development, and water source creation.',
+    eligibility:'👤 All farmers. Priority to small & marginal farmers. Apply through state agriculture department.',
+    link:'https://pmksy.gov.in'
+  },
+  {
+    icon:'🌱',title:'National Mission for Sustainable Agriculture (NMSA)',ministry:'Ministry of Agriculture & Farmers Welfare',
+    category:'input',badge:'badge-input',badgeLabel:'🌱 Input Subsidy',
+    highlight:'Free soil health cards + input subsidies',
+    benefit:'Soil Health Card scheme, organic farming support, crop diversification, and water-use efficiency improvements.',
+    eligibility:'👤 All farmers. Soil Health Card issued free — collect from nearest Krishi Vigyan Kendra (KVK).',
+    link:'https://nmsa.dac.gov.in'
+  },
+  {
+    icon:'📱',title:'eNAM (National Agriculture Market)',ministry:'Ministry of Agriculture & Farmers Welfare',
+    category:'market',badge:'badge-market',badgeLabel:'📈 Market Access',
+    highlight:'Sell crops online across 1,000+ mandis',
+    benefit:'Online trading platform connecting farmers directly to buyers across India. Eliminates middlemen, ensures better prices.',
+    eligibility:'👤 All farmers with Aadhaar and bank account. Register at nearest APMC mandi or online.',
+    link:'https://enam.gov.in'
+  },
+  {
+    icon:'⚡',title:'PM Kusum Yojana',ministry:'Ministry of New & Renewable Energy',
+    category:'input',badge:'badge-input',badgeLabel:'🌱 Input Subsidy',
+    highlight:'90% subsidy on solar pumps',
+    benefit:'Solar pumps for irrigation with up to 90% subsidy (60% govt + 30% loan). Farmers can also sell surplus solar power.',
+    eligibility:'👤 Individual farmers, cooperatives, panchayats. Apply through state nodal agencies.',
+    link:'https://pmkusum.mnre.gov.in'
+  },
+  {
+    icon:'📦',title:'Paramparagat Krishi Vikas Yojana (PKVY)',ministry:'Ministry of Agriculture & Farmers Welfare',
+    category:'input',badge:'badge-input',badgeLabel:'🌱 Input Subsidy',
+    highlight:'₹50,000/hectare for organic farming',
+    benefit:'Financial support for organic farming certification, training, and marketing. Cluster-based approach with 50-acre groups.',
+    eligibility:'👤 Farmer clusters of at least 50 farmers. Apply through state agriculture department.',
+    link:'https://pgsindia-ncof.gov.in'
+  },
+  {
+    icon:'🚜',title:'Sub-Mission on Agricultural Mechanization (SMAM)',ministry:'Ministry of Agriculture & Farmers Welfare',
+    category:'input',badge:'badge-input',badgeLabel:'🌱 Input Subsidy',
+    highlight:'Up to 50% subsidy on farm machinery',
+    benefit:'Subsidies on tractors, combine harvesters, and modern farm equipment. Custom Hiring Centres (CHC) for rental machinery.',
+    eligibility:'👤 Small & marginal farmers get higher subsidy (50%). Apply at district agriculture office.',
+    link:'https://agrimachinery.nic.in'
+  },
+  {
+    icon:'🏫',title:'Kisan Call Centre (KCC Helpline)',ministry:'Ministry of Agriculture & Farmers Welfare',
+    category:'tech',badge:'badge-tech',badgeLabel:'📱 Technology',
+    highlight:'Free expert advice — Call 1800-180-1551',
+    benefit:'Toll-free helpline in local languages — get advice on crop diseases, market prices, weather, and govt schemes anytime.',
+    eligibility:'👤 All farmers. No registration needed. Call free from any phone.',
+    link:'https://dackkms.gov.in'
+  },
+  {
+    icon:'🏦',title:'Agriculture Infrastructure Fund (AIF)',ministry:'Ministry of Agriculture & Farmers Welfare',
+    category:'credit',badge:'badge-credit',badgeLabel:'🏦 Credit & Loans',
+    highlight:'Loans up to ₹2 Cr at 3% interest subsidy',
+    benefit:'Post-harvest management infrastructure — cold storage, warehouses, sorting units. Interest subvention of 3% for 7 years.',
+    eligibility:'👤 Farmers, FPOs, PACS, cooperatives. Apply through participating banks or portal.',
+    link:'https://agriinfra.dac.gov.in'
+  },
+  {
+    icon:'🌻',title:'National Food Security Mission (NFSM)',ministry:'Ministry of Agriculture & Farmers Welfare',
+    category:'input',badge:'badge-input',badgeLabel:'🌱 Input Subsidy',
+    highlight:'Free seeds + subsidised inputs for key crops',
+    benefit:'Cluster demonstrations, distribution of improved seeds, IPM kits, and training for rice, wheat, pulses, coarse cereals, and nutri-cereals.',
+    eligibility:'👤 Farmers in identified districts. Contact local Block Agriculture Officer for enrollment.',
+    link:'https://nfsm.gov.in'
+  },
+];
+
+let filteredSchemes=[...SCHEMES];
+
+function renderSchemeGrid(schemes){
+  const grid=document.getElementById('schemeGrid');
+  if(!grid)return;
+  if(!schemes.length){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🏛️</div><p class="empty-text">No schemes match your search. Try a different keyword.</p></div>`;
+    return;
+  }
+  grid.innerHTML=schemes.map((s,i)=>`
+    <div class="scheme-card" style="animation-delay:${i*0.05}s">
+      <div class="scheme-header">
+        <span class="scheme-icon">${s.icon}</span>
+        <div>
+          <div class="scheme-title">${s.title}</div>
+          <div class="scheme-ministry">🏛️ ${s.ministry}</div>
+        </div>
+      </div>
+      <span class="scheme-badge ${s.badge}">${s.badgeLabel}</span>
+      <div class="scheme-highlight">✅ ${s.highlight}</div>
+      <div class="scheme-benefit">${s.benefit}</div>
+      <div class="scheme-eligibility">${s.eligibility}</div>
+      <button class="scheme-apply-btn" onclick="window.open('${s.link}','_blank')">🔗 Apply / Learn More →</button>
+    </div>`).join('');
+}
+
+function filterSchemes(){
+  const q=(document.getElementById('schemeSearch').value||'').toLowerCase();
+  const cat=document.getElementById('schemeCategory').value;
+  filteredSchemes=SCHEMES.filter(s=>{
+    const matchCat=!cat||s.category===cat;
+    const matchQ=!q||(s.title+s.benefit+s.eligibility+s.highlight).toLowerCase().includes(q);
+    return matchCat&&matchQ;
+  });
+  renderSchemeGrid(filteredSchemes);
+}
+
+// ══ HISTORY ══
+function refreshHistory(){
+  const wrap=document.getElementById('historyContent');
+  if(!searchHistory.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><p class="empty-text">No history yet. Start by scanning a crop!</p></div>`;return;}
+  wrap.innerHTML=`<div class="history-list">${searchHistory.map(item=>`<div class="history-card"><div class="history-top">${item.preview?`<img src="${item.preview}" class="history-thumb" alt="">`:`<div class="history-thumb-ph">📝</div>`}<div><div class="history-disease">${item.result?.disease||'Query'}</div><div class="history-query">${item.query||''}</div><div class="history-time">${item.time.toLocaleString()}</div></div></div>${item.result?.cure?`<div class="history-cure">💊 ${item.result.cure.substring(0,130)}${item.result.cure.length>130?'...':''}</div>`:''}</div>`).join('')}</div>`;
+}
+</script>
+</body>
+</html>
