@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KisanAI — आपका डिजिटल कृषि सलाहकार</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     LANDING PAGE
+════════════════════════════════════════ -->
+<section id="landing">
+  <div class="landing-bg"></div>
+  <div class="grain"></div>
+  <div class="particles" id="particles"></div>
+
+  <div class="landing-content">
+    <div class="landing-badge">🏆 AI-Powered Agricultural Intelligence</div>
+
+    <h1 class="landing-title">
+      <span class="green">Kisan</span><span class="white">AI</span>
+    </h1>
+
+    <p class="landing-subtitle">आपका डिजिटल कृषि सलाहकार</p>
+
+    <p class="landing-desc">
+      Your personal AI-powered farm advisor. Detect crop diseases with your trained ML model,
+      track live market prices, get crop recommendations, browse farming FAQs,
+      and buy or sell produce directly with other farmers.
+    </p>
+
+    <div class="features-grid">
+      <div class="feature-card" style="animation-delay:0.1s">
+        <div class="icon">🔬</div>
+        <div class="ftitle">Disease Detection</div>
+        <div class="fdesc">Upload photo — ML model diagnoses instantly</div>
+      </div>
+      <div class="feature-card" style="animation-delay:0.2s">
+        <div class="icon">📈</div>
+        <div class="ftitle">Live Market Prices</div>
+        <div class="fdesc">Real-time mandi rates for all crops</div>
+      </div>
+      <div class="feature-card" style="animation-delay:0.25s">
+        <div class="icon">❓</div>
+        <div class="ftitle">Farming FAQ</div>
+        <div class="fdesc">Answers to 25+ common farming questions</div>
+      </div>
+      <div class="feature-card" style="animation-delay:0.3s">
+        <div class="icon">💡</div>
+        <div class="ftitle">Crop Advisor</div>
+        <div class="fdesc">Personalized max-profit recommendations</div>
+      </div>
+      <div class="feature-card" style="animation-delay:0.35s">
+        <div class="icon">🛒</div>
+        <div class="ftitle">Kisan Bazaar</div>
+        <div class="fdesc">Buy &amp; sell crops — no middlemen</div>
+      </div>
+      <div class="feature-card" style="animation-delay:0.4s">
+        <div class="icon">💬</div>
+        <div class="ftitle">Ask KisanAI</div>
+        <div class="fdesc">Chat in Hindi or English anytime</div>
+      </div>
+    </div>
+
+    <button class="cta-btn" onclick="enterApp()">Get Started — It's Free &nbsp;→</button>
+    <p class="cta-sub">No registration required &nbsp;·&nbsp; Works in Hindi &amp; English</p>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     APP SHELL
+════════════════════════════════════════ -->
+<div id="app">
+  <div class="app-bg"></div>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🌱</span>
+        <span class="logo-text">KisanAI</span>
+        <span class="logo-badge">Beta</span>
+      </div>
+      <div class="header-right">
+        <!-- Backend status badge — updated live by JS -->
+        <div id="backendStatus" style="font-size:11px;padding:4px 10px;border:1px solid rgba(74,222,128,0.2);border-radius:20px;color:#fbbf24;white-space:nowrap;">● Checking ML...</div>
+
+        <select class="lang-select" id="langSelect" onchange="switchLang(this.value)">
+          <option value="en">🇬🇧 English</option>
+          <option value="hi">🇮🇳 हिंदी</option>
+        </select>
+
+        <div id="userArea">
+          <button class="login-btn" onclick="openModal()">Login / Register</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── NAV ── -->
+  <nav>
+    <div class="nav-inner">
+      <button class="nav-tab active" onclick="switchTab('scan',this)">🔬 Scan Crop</button>
+      <button class="nav-tab" onclick="switchTab('market',this)">📈 Market Prices</button>
+      <button class="nav-tab" onclick="switchTab('faq',this)">❓ Farming FAQ <span class="nav-new-badge">NEW</span></button>
+      <button class="nav-tab" onclick="switchTab('market2',this)">🛒 Kisan Bazaar <span class="nav-new-badge">NEW</span></button>
+      <button class="nav-tab" onclick="switchTab('suggest',this)">💡 Crop Advisor</button>
+      <button class="nav-tab" onclick="switchTab('ask',this)">💬 Ask KisanAI</button>
+      <button class="nav-tab" onclick="switchTab('history',this)">📂 History</button>
+    </div>
+  </nav>
+
+  <!-- ── MAIN ── -->
+  <main>
+
+    <!-- ════ SCAN PANEL ════ -->
+    <div class="panel active" id="panel-scan">
+      <div class="section-header">
+        <h2 class="section-title">🔬 Crop Disease Detection</h2>
+        <p class="section-sub">Upload photo or describe your crop issue — your ML model diagnoses it instantly</p>
+      </div>
+
+      <div class="input-type-row">
+        <button class="type-btn active" onclick="setInputType('image',this)">📷 Photo / Image</button>
+        <button class="type-btn" onclick="setInputType('text',this)">✏️ Describe Issue</button>
+      </div>
+
+      <!-- Image upload dropzone -->
+      <div id="mediaInputWrap">
+        <div class="dropzone" id="dropzone"
+          onclick="document.getElementById('fileInput').click()"
+          ondragover="event.preventDefault(); this.classList.add('dragover')"
+          ondragleave="this.classList.remove('dragover')"
+          ondrop="handleDrop(event)">
+          <div class="dropzone-inner" id="dropzoneInner">
+            <div class="drop-icon">📷</div>
+            <p class="drop-text">Drag &amp; drop or click to upload</p>
+            <p class="drop-hint">JPG, PNG, WEBP, HEIC</p>
+          </div>
+        </div>
+        <input type="file" id="fileInput" style="display:none" accept="image/*" onchange="handleFile(this.files[0])">
+      </div>
+
+      <!-- Text description input -->
+      <div id="textInputWrap" style="display:none" class="text-area-wrap">
+        <textarea id="textQuery" rows="5" placeholder="Describe your crop problem... e.g., Yellow spots on wheat leaves, wilting tomato plants, brown patches on rice..."></textarea>
+      </div>
+
+      <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">🔬 Analyze Now</button>
+
+      <!-- Result card is injected here by JS -->
+      <div id="resultWrap" style="display:none"></div>
+    </div>
+
+
+    <!-- ════ MARKET PANEL ════ -->
+    <div class="panel" id="panel-market">
+      <div class="section-header">
+        <h2 class="section-title">📈 Live Market Prices</h2>
+        <div class="live-bar">
+          <div class="live-dot"></div>
+          <span class="live-text" id="liveText">LIVE · Updating...</span>
+        </div>
+      </div>
+      <div class="price-grid" id="priceGrid"></div>
+      <div class="market-note">⚠️ Prices are indicative. Contact your local mandi for exact rates.</div>
+    </div>
+
+
+    <!-- ════ FAQ PANEL ════ -->
+    <div class="panel" id="panel-faq">
+      <div class="section-header">
+        <h2 class="section-title">❓ Farming FAQ</h2>
+        <p class="section-sub">Quick answers to the most common agricultural questions</p>
+      </div>
+
+      <div class="faq-search-wrap">
+        <span class="faq-search-icon">🔍</span>
+        <input class="faq-search" id="faqSearch" type="text"
+          placeholder="Search questions... e.g. urea, wheat, irrigation"
+          oninput="filterFAQ()">
+      </div>
+
+      <div class="faq-categories" id="faqCats">
+        <button class="faq-cat-btn active" onclick="filterCat('all',this)">🌾 All</button>
+        <button class="faq-cat-btn" onclick="filterCat('fertilizer',this)">🧪 Fertilizer</button>
+        <button class="faq-cat-btn" onclick="filterCat('pest',this)">🐛 Pest &amp; Disease</button>
+        <button class="faq-cat-btn" onclick="filterCat('irrigation',this)">💧 Irrigation</button>
+        <button class="faq-cat-btn" onclick="filterCat('soil',this)">🌍 Soil</button>
+        <button class="faq-cat-btn" onclick="filterCat('crop',this)">🌱 Crop Care</button>
+        <button class="faq-cat-btn" onclick="filterCat('govt',this)">🏛️ Govt Schemes</button>
+      </div>
+
+      <div class="faq-list" id="faqList"></div>
+    </div>
+
+
+    <!-- ════ KISAN BAZAAR PANEL ════ -->
+    <div class="panel" id="panel-market2">
+      <div class="section-header">
+        <h2 class="section-title">🛒 Kisan Bazaar</h2>
+        <p class="section-sub">Buy and sell crops directly with farmers — no middlemen</p>
+      </div>
+
+      <div class="mkt-tabs">
+        <button class="mkt-tab-btn active" id="mktTabBrowse" onclick="mktTab('browse')">🔍 Browse Listings</button>
+        <button class="mkt-tab-btn" id="mktTabBuy"    onclick="mktTab('buy')">🛒 Post Buying Request</button>
+        <button class="mkt-tab-btn" id="mktTabSell"   onclick="mktTab('sell')">🌾 Post for Sale</button>
+      </div>
+
+      <!-- Browse listings -->
+      <div id="mktBrowse">
+        <div class="mkt-filter-row">
+          <input class="mkt-filter-input" type="text" id="mktSearch"
+            placeholder="🔍 Search crop, location..." oninput="renderListings()">
+          <select class="mkt-filter-sel" id="mktTypeFilter" onchange="renderListings()">
+            <option value="all">All Listings</option>
+            <option value="sell">🌾 For Sale</option>
+            <option value="buy">🛒 Wanted / Buy</option>
+          </select>
+          <select class="mkt-filter-sel" id="mktCropFilter" onchange="renderListings()">
+            <option value="all">All Crops</option>
+            <option>Wheat</option><option>Rice</option><option>Maize</option>
+            <option>Soybean</option><option>Cotton</option><option>Mustard</option>
+            <option>Tomato</option><option>Potato</option><option>Onion</option>
+            <option>Sugarcane</option><option>Chickpea</option>
+          </select>
+        </div>
+        <div id="listingsCount" class="listings-count"></div>
+        <div class="listings-grid" id="listingsGrid"></div>
+      </div>
+
+      <!-- Buy request form -->
+      <div id="mktBuyForm" style="display:none">
+        <div class="post-form-card">
+          <div class="post-form-title">🛒 Post a Buying Request</div>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-lbl">Crop Name *</label><input class="form-inp" id="buyyCrop" placeholder="e.g. Wheat, Rice, Tomato"></div>
+            <div class="form-group"><label class="form-lbl">Quantity Needed *</label><input class="form-inp" id="buyyQty" placeholder="e.g. 50 quintal, 10 bags"></div>
+            <div class="form-group"><label class="form-lbl">Max Price Offering *</label><input class="form-inp" id="buyyPrice" placeholder="e.g. ₹2200/quintal"></div>
+            <div class="form-group"><label class="form-lbl">Your Location *</label><input class="form-inp" id="buyyLoc" placeholder="Village / District / State"></div>
+            <div class="form-group"><label class="form-lbl">Contact Number *</label><input class="form-inp" id="buyyContact" type="tel" placeholder="Mobile number"></div>
+            <div class="form-group"><label class="form-lbl">Your Name *</label><input class="form-inp" id="buyyName" placeholder="Your name or business"></div>
+          </div>
+          <div class="form-group" style="margin-top:14px">
+            <label class="form-lbl">Additional Details</label>
+            <textarea class="form-inp form-textarea" id="buyyDesc" placeholder="Quality requirement, delivery preference, payment terms..."></textarea>
+          </div>
+          <button class="post-btn buy-btn" onclick="postListing('buy')">🛒 Post Buying Request</button>
+        </div>
+      </div>
+
+      <!-- Sell form -->
+      <div id="mktSellForm" style="display:none">
+        <div class="post-form-card" style="border-color:rgba(251,191,36,0.4)">
+          <div class="post-form-title" style="color:var(--amber)">🌾 Post Crop for Sale</div>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-lbl">Crop Name *</label><input class="form-inp sell-focus" id="selllCrop" placeholder="e.g. Wheat, Rice, Tomato"></div>
+            <div class="form-group"><label class="form-lbl">Quantity Available *</label><input class="form-inp sell-focus" id="selllQty" placeholder="e.g. 100 quintal, 5 tonne"></div>
+            <div class="form-group"><label class="form-lbl">Asking Price *</label><input class="form-inp sell-focus" id="selllPrice" placeholder="e.g. ₹2300/quintal"></div>
+            <div class="form-group"><label class="form-lbl">Your Location *</label><input class="form-inp sell-focus" id="selllLoc" placeholder="Village / District / State"></div>
+            <div class="form-group"><label class="form-lbl">Contact Number *</label><input class="form-inp sell-focus" id="selllContact" type="tel" placeholder="Mobile number"></div>
+            <div class="form-group"><label class="form-lbl">Your Name *</label><input class="form-inp sell-focus" id="selllName" placeholder="Your name"></div>
+          </div>
+          <div class="form-group" style="margin-top:14px">
+            <label class="form-lbl">Description / Quality Details</label>
+            <textarea class="form-inp sell-focus form-textarea" id="selllDesc" placeholder="Crop quality, variety, harvest date, delivery available..."></textarea>
+          </div>
+          <button class="post-btn sell-btn" onclick="postListing('sell')">🌾 Post for Sale</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ════ CROP ADVISOR PANEL ════ -->
+    <div class="panel" id="panel-suggest">
+      <div class="section-header">
+        <h2 class="section-title">💡 Best Crops for Your Field</h2>
+        <p class="section-sub">AI-powered recommendations for maximum profit</p>
+      </div>
+
+      <div class="filter-card">
+        <div class="filter-title">Tell us about your farm</div>
+        <div class="filter-grid">
+          <div class="filter-group">
+            <label class="filter-label">Soil Type</label>
+            <select class="filter-select" id="soilType">
+              <option value="">Select Soil Type</option>
+              <option value="alluvial">Alluvial / दोमट</option>
+              <option value="black cotton">Black Cotton / काली</option>
+              <option value="sandy loam">Sandy Loam / रेतीली</option>
+              <option value="red laterite">Red Laterite / लाल</option>
+              <option value="clay">Clay / चिकनी</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Season</label>
+            <select class="filter-select" id="season">
+              <option value="">Select Season</option>
+              <option value="Kharif">Kharif / खरीफ (Jun–Oct)</option>
+              <option value="Rabi">Rabi / रबी (Nov–Mar)</option>
+              <option value="Zaid">Zaid / जायद (Mar–Jun)</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Water Availability</label>
+            <select class="filter-select" id="waterAvail">
+              <option value="">Select Water</option>
+              <option value="rainfed only">Rainfed Only</option>
+              <option value="limited irrigation">Limited Irrigation</option>
+              <option value="good irrigation">Good Irrigation</option>
+            </select>
+          </div>
+        </div>
+        <button class="analyze-btn" style="margin:0" onclick="getSuggestion()">💡 Get AI Recommendation</button>
+      </div>
+
+      <div id="suggestResults"></div>
+    </div>
+
+
+    <!-- ════ ASK KISANAI PANEL ════ -->
+    <div class="panel" id="panel-ask">
+      <div class="section-header">
+        <h2 class="section-title">💬 Ask KisanAI</h2>
+        <p class="section-sub">Your backend answers disease questions · Claude AI handles everything else</p>
+      </div>
+
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-msg ai">
+            <span class="chat-avatar">🌱</span>
+            <div class="chat-bubble">Namaste! 🙏 I'm KisanAI, your personal farm advisor. Ask me anything about crops, diseases, market prices, fertilizers, irrigation, or government schemes. I speak Hindi &amp; English! 🌾</div>
+          </div>
+        </div>
+        <div class="quick-questions">
+          <button class="quick-q" onclick="setQuestion('Best fertilizer for wheat?')">Best fertilizer for wheat?</button>
+          <button class="quick-q" onclick="setQuestion('How to prevent rice blast?')">Rice blast prevention?</button>
+          <button class="quick-q" onclick="setQuestion('Signs of nitrogen deficiency in crops?')">Nitrogen deficiency signs?</button>
+          <button class="quick-q" onclick="setQuestion('Organic pest control methods?')">Organic pest control?</button>
+          <button class="quick-q" onclick="setQuestion('PM Kisan yojana details?')">PM Kisan Scheme?</button>
+        </div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="chatInput" type="text"
+            placeholder="Type your question in Hindi or English..."
+            onkeydown="if(event.key==='Enter') sendChat()">
+          <button class="chat-send" onclick="sendChat()">→</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ════ HISTORY PANEL ════ -->
+    <div class="panel" id="panel-history">
+      <div class="section-header">
+        <h2 class="section-title">📂 Search History</h2>
+        <p class="section-sub">Your previous scans and analyses</p>
+      </div>
+      <div id="historyContent">
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <p class="empty-text">No history yet. Start by scanning a crop!</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div><!-- end #app -->
+
+
+<!-- ════════════════════════════════════════
+     LOGIN MODAL
+════════════════════════════════════════ -->
+<div class="modal-overlay" id="loginModal" onclick="closeModalCheck(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-emoji">🌱</span>
+      <div class="modal-title">Join KisanAI</div>
+      <div class="modal-sub">Save your history &amp; post listings on Kisan Bazaar</div>
+    </div>
+    <div class="modal-form">
+      <input class="form-input" id="loginName"    type="text" placeholder="Your Name / आपका नाम">
+      <input class="form-input" id="loginPhone"   type="tel"  placeholder="Mobile Number / मोबाइल नंबर">
+      <input class="form-input" id="loginVillage" type="text" placeholder="Village / District / गाँव / जिला">
+      <button class="submit-btn" onclick="doLogin()">Start Using KisanAI →</button>
+      <button class="skip-btn"   onclick="closeModal()">Skip for now / अभी नहीं</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     CONTACT MODAL
+════════════════════════════════════════ -->
+<div class="modal-overlay" id="contactModal" onclick="closeContactCheck(event)">
+  <div class="contact-modal" id="contactModalInner"></div>
+</div>
+
+<!-- ════════════════════════════════════════
+     LOGIN NOTIFICATION TOAST
+════════════════════════════════════════ -->
+<div class="notif" id="loginNotif" style="display:none">
+  <div class="notif-icon">🌾</div>
+  <div>
+    <div class="notif-title">Save your progress!</div>
+    <div class="notif-text">Login to save scan history and post listings on Kisan Bazaar.</div>
+  </div>
+  <button class="notif-close" onclick="document.getElementById('loginNotif').style.display='none'">✕</button>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     JAVASCRIPT — loaded last for performance
+════════════════════════════════════════ -->
+<script src="app.js"></script>
+
+</body>
+</html>
